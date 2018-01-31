@@ -84,28 +84,3 @@ env.run(until=totalruntime)#run project for certain amount of time
 #setting a mouse click on the window as proper exit
 # does not respond until the env is finished running
 win.getMouse()
-
-
-"""Leftover pieces 
-
-#collision detection on exact point
-if updateBot() == updateTgt():
-            print('target found')
-
-#get robot co-ordinates
-def updateBot():
-    rX = bot.getCenter().getX()
-    rY = bot.getCenter().getY()
-    return rX, rY
-
-#get target co-ordinates
-def updateTgt():
-    tX = tgt.getCenter().getX()
-    tY = tgt.getCenter().getY()
-    return tX, tY
-            
-            
-            
-            
-            
-"""
