@@ -1,3 +1,18 @@
+Goals for Jan 29th - Feb 4th
+- Mutliple instances of robots and tagets (Anthea)
+- Proper Size environment (Samina)
+- Bounded bot movement (Samina)
+- Improved Collision (Matt)
+- Randomized target spawn (Matt)
+
+Work done
+January 22nd - January 28th
+- Git Repo made
+- Base environment
+- Random moving bot
+- still targets
+- Base colission detection
+
 This program will use SimPy, so having pip installed will be very useful.
 Check if you have pip: https://dev.to/el_joft/installing-pip-on-windows
 Crash course on SimPy: https://simpy.readthedocs.io/en/latest/simpy_intro/index.html
