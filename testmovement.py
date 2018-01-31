@@ -46,14 +46,14 @@ win.setCoords(0,0,winHeight,winWidth) #set window coords by (x lower left, y low
 win.setBackground('black')
 
 
-#create a target using circle
+#craw a target using circle
 tgt = Circle(Point(randSpawn(winHeight), randSpawn(winWidth)), radius = tgtradius)
 tgt.setFill('white')
 tgt.setOutline('red')
 tgt.draw(win)
 
 
-#create a bot
+#draw a bot
 bot = Circle(Point(randSpawn(winHeight), randSpawn(winWidth)), radius = botradius)
 bot.setFill('blue')
 bot.setOutline('white')
