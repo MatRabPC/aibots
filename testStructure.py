@@ -1,3 +1,4 @@
+import progressbar
 from graphics import *
 import simpy
 import random
@@ -7,24 +8,41 @@ import math
 env = simpy.rt.RealtimeEnvironment(factor=1)  # movement time
 winHeight = 10  # height of the window
 winWidth = 10  # width of the window
-totalruntime = 8 # amount of steps the system will run for
+totalruntime = 20 # amount of steps the system will run for
 timestep = 1  # amount of steps the project will take
 
 tgtradius = 0.5
-botradius = 2
+botradius = 1
 tgtX = 5
 tgtY = 5
 botX = 5
 botY = 5
 
-#intended test for target and bot starting at same position
-fact = 3 #radius away from the point the target is
+#test slowly going away from the target, assuming target and bot starting at same position
+fact = 1 #radius away from the point the target is
+test = [
+    1 * fact ,0, # 1 right
+    1, 0, # 2 right
+    - fact - 1, 1 * fact, # 1 above
+    0, 1,  # 2 above
+
+    0, 2 * (-fact) - 1, #1 below
+    0, -1, # 2 below
+    -1 * fact, fact + 1, # 1 left
+    -1, 0 # 2 left
+]
+
+
+"""
+#test factors adjecent to the target, assuming target and bot starting at same position
+fact = 2 #radius away from the point the target is
 test = [
     1 * fact,0, # right
     -2 * fact, 0, # left
     1 * fact, 1 * fact, # up
     0, -2 * fact # down
 ]
+"""
 
 """ #for target at (3,3) and bot at (6,6)
 #controlled move pattern
@@ -94,14 +112,16 @@ def robots(env, tc = 0):
         bot.move(test[tc], test[tc+1])  #run test case
         tc += 2
         if colDet(bot, tgt) <= tgtradius + botradius:  # checks colission detection
-            #print('TARGET FOUND AT %d, %d' % updateCo(bot))
+            print('TARGET FOUND AT %d, %d' % updateCo(bot))
             yield env.timeout(timestep)
         yield env.timeout(timestep)
 
 
 ##RUN PROCESS##
 env.process(robots(env))  # starting process
-env.run(until=totalruntime)  # run project for certain amount of time
+env.run(until=len(test))
+
+
 
 # setting a mouse click on the window as proper exit
 # does not respond until the env is finished running
