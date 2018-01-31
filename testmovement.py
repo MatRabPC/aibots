@@ -5,7 +5,11 @@ import math
 
 
 
-##define system variables and methods##
+"""
+DEFINE VARIABLES AND METHODS
+"""
+
+
 env = simpy.rt.RealtimeEnvironment(factor=0.07) #movement time
 winHeight = 30 #height of the window
 winWidth = 30 # width of the window
@@ -39,7 +43,11 @@ def colDet(obj1, obj2):
 
 
 
-##CREATE VISUALS##
+"""
+CREATE VISUALS
+"""
+
+
 #create window
 win = GraphWin('MaSaAn Bots', width = 800, height = 1000) #Create window
 win.setCoords(0,0,winHeight,winWidth) #set window coords by (x lower left, y lower left, x upper right, y upper right)
@@ -62,7 +70,11 @@ bot.draw(win)
 
 
 
-##DEFINE ROBOT MOVEMENT AND TARGET COLLECTION##
+"""
+DEFINE ROBOT MOVEMENT AND TARGET COLLECTION
+"""
+
+
 def robots(env):
     while True:
         bot.move(randMov(), randMov()) #assigns random movement to bot, better way to generate?
@@ -76,7 +88,11 @@ def robots(env):
 
 
 
-##RUN PROCESS##
+"""
+RUN PROCESS
+"""
+
+
 env.process(robots(env)) #starting process
 env.run(until=totalruntime)#run project for certain amount of time
 
