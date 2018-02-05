@@ -1,6 +1,6 @@
 from graphics import *
 import random
-#from tgtbuilder import updateTgt
+import math
 
 '''
 All bot stuff
@@ -11,14 +11,11 @@ def buildbot(win, clr):
     bot = Circle(Point(5,5), radius = 1)
     bot.setFill(clr)
     bot.setOutline('white')
-
     #bot = Image(Point(5, 5), 'aibot.gif')
-
     bot.draw(win)
-
     return bot
 
-##################
+
 def safeMovBotRandom(bot, sizeof):
     # randomize movement, check if within border until safe to move
     xstep = randMov()
@@ -28,11 +25,7 @@ def safeMovBotRandom(bot, sizeof):
         xstep = randMov()
         ystep = randMov()
 
-    #label.undraw(win)
     bot.move(xstep, ystep)
-    #label = Text(Point(xstep + bot.getCenter().getX(), ystep + +bot.getCenter().getY()), str(xstep) + "," + str(ystep))
-    #label.setFill("white")
-    #label.draw(win)
 
 
 def checkMovLegal(x, y, sizeof):
@@ -42,13 +35,12 @@ def checkMovLegal(x, y, sizeof):
     else:
         return True
 
+
 def drawCoorsOnBot(x, y, win):
     label = Text(Point(x, y), str(x)+","+str(y))
     label.setFill("white")
     label.draw(win)
 
-
-######
 
 # return either -1, 0 or 1
 def randMov():
@@ -62,3 +54,22 @@ def updateBot(bot):
     rY = bot.getCenter().getY()
     return rX, rY
 
+
+
+#########################
+#return random coordinates in the window
+def randSpawn(limit):
+    rn = random.randint(0, limit)
+    return rn
+
+#return x and y position of circle objects
+def updateCo(obj):
+    oX = obj.getCenter().getX()
+    oY = obj.getCenter().getY()
+    return oX, oY
+
+
+#detect collision
+def colDet(obj1, obj2):
+    dist = math.sqrt((obj1.getCenter().getX() - obj2.getCenter().getX()) ** 2 + (obj1.getCenter().getY() - obj2.getCenter().getY()) ** 2)
+    return dist
