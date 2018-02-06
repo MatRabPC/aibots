@@ -1,9 +1,8 @@
-Goals for Jan 29th - Feb 4th
-- Mutliple instances of robots and tagets (Anthea)
-- Proper Size environment (Samina)
-- Bounded bot movement (Samina)
-- Improved Collision (Matt)
-- Randomized target spawn (Matt)
+Goals for Feb 6 - Feb 12
+- Modualize design/Merge Code (Samina)
+- Bot's and their targets running on their own thread (Anthea)
+- Radar that detects objects/what kind of object (Samina & Matt)
+- make outlines thicker?
 
 Work done
 January 22nd - January 28th
@@ -12,6 +11,13 @@ January 22nd - January 28th
 - Random moving bot
 - still targets
 - Base colission detection
+
+Jan 29th - Feb 4th
+- Mutliple instances of robots and tagets (Anthea)
+- Proper Size environment (Samina)
+- Bounded bot movement (Samina)
+- Improved Collision (Matt)
+- Randomized target spawn (Matt)
 
 Matt's Opening Notes
 This program will use SimPy, so having pip installed will be very useful.
