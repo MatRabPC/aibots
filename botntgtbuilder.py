@@ -7,27 +7,104 @@ Building Stuff
 '''
 
 def buildbot(win, clr):
-
-    #bot = Circle(Point(5,5), radius = 1)
-    bot = Circle(Point(random.randint(5,10), random.randint(5,10)), radius = 1)
+    bot = Circle(Point(random.randint(5,15), random.randint(5,15)), radius = 1)
     bot.setFill(clr)
     bot.setOutline('white')
-    #bot = Image(Point(5, 5), 'aibot.gif')
     bot.draw(win)
+
     return bot
 
 def buildtgt(win, clr):
 
-    tgt = Circle(Point(random.randint(5,10), random.randint(5,10)), radius = 1)
-    tgt.setFill('white')
+    tgt = Circle(Point(random.randint(5,15), random.randint(5,15)), radius = 1)
+    tgt.setFill('#000')
     tgt.setOutline(clr)
     tgt.draw(win)
 
     return tgt
 
 
+def btfactory(win, colours, nobot, notgt):
+
+    botlot = [None] * nobot
+    tgtlot = [None] * (nobot * notgt)
+    loclist = list()
+
+    tgtlot[0] = buildtgt(win, colours[0])
+
+    for i in range(nobot):
+        for j in range(1, notgt):
+            tgtlot[j] = buildtgt(win, colours[i])
+            loclist.append(tgtlot[j].getCenter())
+
+        #    print loclist
+         #   print tgtlot[i].getCenter()
+
+            while tgtlot[i] in loclist: # or loopinters(tgtlot[i], loclist) :
+                tgtlot[j].undraw()
+                tgtlot[j] = buildtgt(win, colours[i])
+                loclist.pop()
+                print 'popped'
+                loclist.append(tgtlot[j].getCenter())
+
+        if i < notgt-1:
+            tgtlot[i+notgt] = buildtgt(win, colours[i+1])
+
+    for i in range(nobot):
+        botlot[i] = buildbot(win, colours[i])
+
+        while botlot[i].getCenter() in loclist:
+            botlot[j] = buildbot(win, colours[i])
+            loclist.pop()
+            loclist.append(tgtlot[j].getCenter())
+
+    print loclist
+
+    return botlot, tgtlot
+
+
+
+def noncollinit(bots, tgts):
+
+    botco = [(0,0)] * len(bots)
+    tgtco = [(0,0)] * len(tgts)
+
+    for i in range(len(bots)):
+        botco[i] = bots[i].getCenter()
+
+    for i in range(len(tgts)):
+        tgtco[i] = tgts[i].getCenter()
+
+    for i in range(len(bots)):
+     #   if botco[i] in tgtco
+        pass
+
+
 '''
 functions
+'''
+
+def loopinters(obj, lst):
+
+    for i in range(len(lst)):
+        if objinter(obj.getCenter(), lst[i], 2):
+            return True
+
+    return False
+
+
+def objinter(obj1, obj2, r):
+
+    distance = ((obj1.getX() - obj2.getX()) ** 2 + (obj1.getY() - obj2.getY()) ** 2) ** 0.5
+
+    return distance < r + r
+'''
+    r0 = r
+    r1 = r
+    x0,y0 = obj1.getX(), obj1.getY()
+    x1,y1 = obj2.getX(), obj2.getY()
+
+    return math.hypot(x0 - x1, y0 - y1) <= (r0 + r1)
 '''
 
 def colDetSense(obj1, obj2):
@@ -40,6 +117,7 @@ def colDetSense(obj1, obj2):
             return True
 
     return False
+
 
 
 def safeMovBotRandom(bot, sizeof):
@@ -100,19 +178,6 @@ def colDet(obj1, obj2):
     dist = math.sqrt((obj1.getCenter().getX() - obj2.getCenter().getX()) ** 2 + (obj1.getCenter().getY() - obj2.getCenter().getY()) ** 2)
     return dist
 
-
-'''
-all target stuff
-'''
-
-def buildtgt(win, clr):
-
-    tgt = Circle(Point(random.randint(5,10), random.randint(5,10)), radius = 1)
-    tgt.setFill('white')
-    tgt.setOutline(clr)
-    tgt.draw(win)
-
-    return tgt
 
 #get target co-ordinates
 def updateTgt(tgt):

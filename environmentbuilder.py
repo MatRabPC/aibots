@@ -1,4 +1,5 @@
 from graphics import *
+from botntgtbuilder import *
 
 def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 
@@ -67,3 +68,27 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 
 
 #####################################################################
+
+
+def robots(env, timestep, botlot, tgtlot, xupper):
+    while True:
+        #bot.move(randMov(), randMov()) #assigns random movement to bot, better way to generate?
+
+        for i in range(len(botlot)):
+
+            safeMovBotRandom(botlot[i], xupper) #still just random movement, but safe check too
+
+            for j in range(len(tgtlot)):
+                if colDet(botlot[i], tgtlot[j]): #checks colission detection
+                    print('TARGET FOUND AT %d, %d' %updateCo(botlot[i]))
+                    yield env.timeout(timestep)
+
+
+                if updateBot(botlot[i]) == updateTgt(tgtlot[j]) and botlot[i].config["fill"] == tgtlot[j].config["outline"]:
+                    print('target found')
+                    tgtlot[j].undraw()
+                    yield env.timeout(timestep)
+
+                print('The bot is at %d, %d' %updateCo(botlot[i]))
+                print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
+            yield env.timeout(timestep)
