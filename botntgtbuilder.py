@@ -6,17 +6,17 @@ import math
 Building Stuff
 '''
 
-def buildbot(win, clr):
-    bot = Circle(Point(random.randint(5,15), random.randint(5,15)), radius = 1)
+def buildbotr(win, clr, x, y):
+    bot = Circle(Point(x, y), radius = 1)
     bot.setFill(clr)
     bot.setOutline('white')
     bot.draw(win)
 
     return bot
 
-def buildtgt(win, clr):
+def buildtgtr(win, clr, x, y):
 
-    tgt = Circle(Point(random.randint(5,15), random.randint(5,15)), radius = 1)
+    tgt = Circle(Point(x, y), radius = 1)
     tgt.setFill('#000')
     tgt.setOutline(clr)
     tgt.draw(win)
@@ -24,60 +24,60 @@ def buildtgt(win, clr):
     return tgt
 
 
-def btfactory(win, colours, nobot, notgt):
+def aifactory(win, colours, nobot, notgt):
 
+    lower = 0
+    upper = win.getHeight()
     botlot = [None] * nobot
     tgtlot = [None] * (nobot * notgt)
     loclist = list()
-
-    tgtlot[0] = buildtgt(win, colours[0])
-
-    for i in range(nobot):
-        for j in range(1, notgt):
-            tgtlot[j] = buildtgt(win, colours[i])
-            loclist.append(tgtlot[j].getCenter())
-
-        #    print loclist
-         #   print tgtlot[i].getCenter()
-
-            while tgtlot[i] in loclist: # or loopinters(tgtlot[i], loclist) :
-                tgtlot[j].undraw()
-                tgtlot[j] = buildtgt(win, colours[i])
-                loclist.pop()
-                print 'popped'
-                loclist.append(tgtlot[j].getCenter())
-
-        if i < notgt-1:
-            tgtlot[i+notgt] = buildtgt(win, colours[i+1])
+    xtemp = -1
+    ytemp = -1
+    tgton = 0
 
     for i in range(nobot):
-        botlot[i] = buildbot(win, colours[i])
+        for j in range(notgt):
+            while xtemp < 0:
+                xtemp = random.randint(3, 10)
+                ytemp = random.randint(3, 10)
 
-        while botlot[i].getCenter() in loclist:
-            botlot[j] = buildbot(win, colours[i])
-            loclist.pop()
-            loclist.append(tgtlot[j].getCenter())
+               # print (xtemp, ytemp)[0]
 
-    print loclist
+                if (xtemp, ytemp) in loclist or loopinters((xtemp, ytemp), loclist):
+                    xtemp = -1
+                    ytemp = -1
+
+            tgtlot[tgton] = buildtgtr(win, colours[i], xtemp, ytemp)
+            loclist.append((tgtlot[j+i].getCenter().getX(), tgtlot[j+i].getCenter().getY()))
+            tgton += 1
+            print "Appened", tgtlot[j+i]
+            print tgtlot
+            xtemp = -1
+            ytemp = -1
+
+    print tgtlot
+
+    for i in range(nobot):
+        while xtemp < 0:
+            xtemp = random.randint(3, 10)
+            ytemp = random.randint(3, 10)
+
+
+
+            if (xtemp, ytemp) in loclist or loopinters((xtemp, ytemp), loclist):
+                xtemp = -1
+                ytemp = -1
+                print loclist, xtemp  # (xtemp, ytemp)[0]
+
+        botlot[i] = buildbotr(win, colours[i], xtemp, ytemp)
+        loclist.append((botlot[i].getCenter().getX(), botlot[i].getCenter().getY()))
+        xtemp = -1
+        ytemp = -1
+        #botlot[i] = buildbot(win, colours[i])
+
+    print tgtlot
 
     return botlot, tgtlot
-
-
-
-def noncollinit(bots, tgts):
-
-    botco = [(0,0)] * len(bots)
-    tgtco = [(0,0)] * len(tgts)
-
-    for i in range(len(bots)):
-        botco[i] = bots[i].getCenter()
-
-    for i in range(len(tgts)):
-        tgtco[i] = tgts[i].getCenter()
-
-    for i in range(len(bots)):
-     #   if botco[i] in tgtco
-        pass
 
 
 '''
@@ -87,37 +87,15 @@ functions
 def loopinters(obj, lst):
 
     for i in range(len(lst)):
-        if objinter(obj.getCenter(), lst[i], 2):
+        if pointinter(obj, lst[i], 1):
+        #if objinter(obj.getCenter(), lst[i], 2):
             return True
-
     return False
 
+def pointinter(obj1, obj2, r):
 
-def objinter(obj1, obj2, r):
-
-    distance = ((obj1.getX() - obj2.getX()) ** 2 + (obj1.getY() - obj2.getY()) ** 2) ** 0.5
-
+    distance = ((obj1[0] - obj2[0]) ** 2 + (obj1[1] - obj2[1]) ** 2) ** 0.5
     return distance < r + r
-'''
-    r0 = r
-    r1 = r
-    x0,y0 = obj1.getX(), obj1.getY()
-    x1,y1 = obj2.getX(), obj2.getY()
-
-    return math.hypot(x0 - x1, y0 - y1) <= (r0 + r1)
-'''
-
-def colDetSense(obj1, obj2):
-
-    dist = math.sqrt((obj1.getCenter().getX() - obj2.getCenter().getX()) ** 2 + (
-    obj1.getCenter().getY() - obj2.getCenter().getY()) ** 2)
-
-    if dist <= 1:
-        if obj1.config["fill"] == obj2.config["outline"]:
-            return True
-
-    return False
-
 
 
 def safeMovBotRandom(bot, sizeof):
@@ -140,12 +118,6 @@ def checkMovLegal(x, y, sizeof):
         return True
 
 
-def drawCoorsOnBot(x, y, win):
-    label = Text(Point(x, y), str(x)+","+str(y))
-    label.setFill("white")
-    label.draw(win)
-
-
 # return either -1, 0 or 1
 def randMov():
     rn = random.randint(-1, 1)
@@ -159,8 +131,6 @@ def updateBot(bot):
     return rX, rY
 
 
-
-#########################
 #return random coordinates in the window
 def randSpawn(limit):
     rn = random.randint(0, limit)
@@ -171,7 +141,6 @@ def updateCo(obj):
     oX = obj.getCenter().getX()
     oY = obj.getCenter().getY()
     return oX, oY
-
 
 #detect collision
 def colDet(obj1, obj2):
