@@ -191,7 +191,7 @@ def updateTgt(tgt):
 
 def checkVisited(bot, x, y):
 
-    print bot.visited
+   # print bot.visited
     print (x,y)
 
     if (x, y) in bot.visited:
@@ -213,7 +213,32 @@ def getLocList(botlot, tgtlot):
     return list
 
 
+def getTgtList(tgtlot):
+
+    list = []
+
+    for i in range(len(tgtlot)):
+        list.append(getLoc(tgtlot[i]))
+
+    return list
+
+
 def getLoc(obj):
     tX = obj.getCenter().getX()
     tY = obj.getCenter().getY()
     return (tX, tY)
+
+
+
+def checkTargetFound(botlot, tgtlot, tgtloclist):
+
+    if (updateBot(botlot) in tgtloclist) and (
+        tgtlot[tgtloclist.index(updateBot(botlot))].config["outline"] == botlot.config["fill"]):
+
+        print('target found')
+        tgtlot[tgtloclist.index(updateBot(botlot))].undraw()
+        tgtlot.pop(tgtloclist.index(updateBot(botlot)))
+        tgtloclist.pop(tgtloclist.index(updateBot(botlot)))
+
+        return True
+    return False

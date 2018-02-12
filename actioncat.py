@@ -19,7 +19,8 @@ colours = ['blue', 'red', 'green', 'yellow', 'orange']
 win = envwindowbuilder(xlower, xupper, ylower, yupper, xupper/10)
 botlot, tgtlot = aifactory(win, colours, nobot, notgt)
 loclist = getLocList(botlot, tgtlot)
-print loclist
+tgtloclist = getTgtList(tgtlot)
+
 #bot = make_bot(win, 'green', 23, 23)
 
 win.getMouse() #waits on mouse click to begin
@@ -27,7 +28,7 @@ win.getMouse() #waits on mouse click to begin
 ################################################################################################ JACK IN, MEGAMAN, EXECUTE
 
 env = simpy.rt.RealtimeEnvironment(factor=0.07, strict=False) #movement time, **strict=false removes the realtime runtime error
-env.process(robots(env, timestep, botlot, tgtlot, xupper, loclist))
+env.process(robots(env, timestep, botlot, tgtlot, xupper, tgtloclist))
 env.run(until=totalruntime)
 
 print('end of event')

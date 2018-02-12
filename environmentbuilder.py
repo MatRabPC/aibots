@@ -66,14 +66,8 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 #####################################################################
 
 
-def robots(env, timestep, botlot, tgtlot, xupper, loclist):
+def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
     while True:
-
-        #xstep, ystep = safeMovBotRandom(botlot[i], xupper)
-
-
-        #'''
-        #bot.move(randMov(), randMov()) #assigns random movement to bot, better way to generate?
 
         for i in range(len(botlot)):
 
@@ -81,21 +75,22 @@ def robots(env, timestep, botlot, tgtlot, xupper, loclist):
 
             checkLoc(botlot[i], xstep, ystep)
 
+            if checkTargetFound(botlot[i], tgtlot, tgtloclist):
+                yield env.timeout(timestep)
 
-            for j in range(len(tgtlot)):
-           #     if colDet(botlot[i], tgtlot[j]): #checks colission detection
-            #        print('TARGET FOUND AT %d, %d' %updateCo(botlot[i]))
-             #       yield env.timeout(timestep)
+            '''#moved into function checkTargetFound (above)
+            if (updateBot(botlot[i]) in tgtloclist) and ( tgtlot[tgtloclist.index(updateBot(botlot[i]))].config["outline"] ==  botlot[i].config["fill"]):
 
-                if updateBot(botlot[i]) == updateTgt(tgtlot[j]) and botlot[i].config["fill"] == tgtlot[j].config["outline"]:
-                    print('target found')
-                    tgtlot[j].undraw()
-                    yield env.timeout(timestep)
+                print('target found')
+                tgtlot[tgtloclist.index(updateBot(botlot[i]))].undraw()
+                tgtlot.pop(tgtloclist.index(updateBot(botlot[i])))
+                tgtloclist.pop(tgtloclist.index(updateBot(botlot[i])))
+                yield env.timeout(timestep)
 
               #  print('The bot is at %d, %d' %updateCo(botlot[i]))
               #  print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
+              '''
             yield env.timeout(timestep)
-    #'''
 
 #####################################################################
 
