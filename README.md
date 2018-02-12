@@ -1,8 +1,9 @@
 Goals for Feb 6 - Feb 12
 - Modualize design/Merge Code (Samina)
 - Bot's and their targets running on their own thread (Anthea)
-- Radar that detects objects/what kind of object (Samina & Matt) [use OBJECT.config["outline"]: if outline is white, it's a bot; otherwise it's a target]
+- Radar that detects objects/what kind of object (Samina & Matt)
 - make outlines thicker?
+- ask if, when bot finds all its respective targets, does it disappear or stop moving?
 
 Work done
 January 22nd - January 28th
