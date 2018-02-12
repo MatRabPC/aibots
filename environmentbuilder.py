@@ -19,13 +19,10 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
     win.setBackground('black')
     #win.setCoords(100, 100, 200, 200)#win.winfo_width()/2, win.winfo_height()/2)
 
-
     #create and place square border
     border = Rectangle(Point(xlower+1, ylower+1), Point(xupper-1, yupper-1))
     border.setOutline("white")
     border.draw(win)
-
-    #draw lines within rectangle/border ###########CAN BE CONDENSED, WILL ATTEMPT TO LATER
 
     zerolabel = Text(Point(0, 0), "0")
     zerolabel.setFill("white")
@@ -62,7 +59,6 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
                 graphdot.draw(win)
     #'''
 
-
     win.getMouse() #click to end set up pause
     return win
 
@@ -70,13 +66,21 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 #####################################################################
 
 
-def robots(env, timestep, botlot, tgtlot, xupper):
+def robots(env, timestep, botlot, tgtlot, xupper, loclist):
     while True:
+
+        #xstep, ystep = safeMovBotRandom(botlot[i], xupper)
+
+
+        #'''
         #bot.move(randMov(), randMov()) #assigns random movement to bot, better way to generate?
 
         for i in range(len(botlot)):
 
-            safeMovBotRandom(botlot[i], xupper) #still just random movement, but safe check too
+            xstep, ystep = safeMovBotRandom(botlot[i], xupper) #still just random movement, but safe check too
+
+            checkLoc(botlot[i], xstep, ystep)
+
 
             for j in range(len(tgtlot)):
            #     if colDet(botlot[i], tgtlot[j]): #checks colission detection
@@ -88,6 +92,12 @@ def robots(env, timestep, botlot, tgtlot, xupper):
                     tgtlot[j].undraw()
                     yield env.timeout(timestep)
 
-                print('The bot is at %d, %d' %updateCo(botlot[i]))
-                print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
+              #  print('The bot is at %d, %d' %updateCo(botlot[i]))
+              #  print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
             yield env.timeout(timestep)
+    #'''
+
+#####################################################################
+
+#def storevisit(bot, loc):
+

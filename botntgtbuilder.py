@@ -4,7 +4,7 @@ import math
 
 '''
 Building Stuff
-'''
+
 
 def buildbotr(win, clr, x, y):
     bot = Circle(Point(x, y), radius = 1)
@@ -12,6 +12,33 @@ def buildbotr(win, clr, x, y):
     bot.setOutline('white')
     bot.draw(win)
 
+    return bot
+'''
+
+class Bots(object):
+    visited = []
+    tgts = 0
+    bot = None
+    config = []
+
+    # The class "constructor" - It's actually an initializer
+    def __init__(self, win, clr, x, y):
+        self.bot = Circle(Point(x, y), radius=1)
+        self.bot.setFill(clr)
+        self.bot.setOutline('white')
+        self.bot.draw(win)
+        self.visited.append([x,y])
+        self.config = self.bot.config
+      #-0  self.tgts = tgts
+
+    def getCenter(self):
+        return self.bot.getCenter()
+
+    def move(self, x, y):
+        return self.bot.move(x, y)
+
+def make_bot(win, clr, x, y):
+    bot = Bots(win, clr, x, y)
     return bot
 
 def buildtgtr(win, clr, x, y):
@@ -69,8 +96,8 @@ def aifactory(win, colours, nobot, notgt):
                 ytemp = -1
                 print loclist, xtemp  # (xtemp, ytemp)[0]
 
-        botlot[i] = buildbotr(win, colours[i], xtemp, ytemp)
-        loclist.append((botlot[i].getCenter().getX(), botlot[i].getCenter().getY()))
+        botlot[i] = make_bot(win, colours[i], xtemp, ytemp)
+        loclist.append((botlot[i].bot.getCenter().getX(), botlot[i].bot.getCenter().getY()))
         xtemp = -1
         ytemp = -1
         #botlot[i] = buildbot(win, colours[i])
@@ -103,11 +130,18 @@ def safeMovBotRandom(bot, sizeof):
     xstep = randMov()
     ystep = randMov()
 
-    while (not checkMovLegal(xstep + bot.getCenter().getX(), ystep + +bot.getCenter().getY(), sizeof)):
+    while ( ( not checkMovLegal(xstep + bot.getCenter().getX(), ystep + +bot.getCenter().getY(), sizeof) ) and ( not checkVisited(bot, xstep + bot.getCenter().getX(), ystep + +bot.getCenter().getY())) ):
         xstep = randMov()
         ystep = randMov()
 
+    return xstep, ystep
+
+
+def checkLoc(bot, xstep, ystep):
+
+    bot.visited.append((xstep, ystep))
     bot.move(xstep, ystep)
+
 
 
 def checkMovLegal(x, y, sizeof):
@@ -153,3 +187,33 @@ def updateTgt(tgt):
     tX = tgt.getCenter().getX()
     tY = tgt.getCenter().getY()
     return tX, tY
+
+
+def checkVisited(bot, x, y):
+
+    print bot.visited
+    print (x,y)
+
+    if (x, y) in bot.visited:
+        return True
+
+    return False
+
+
+
+def getLocList(botlot, tgtlot):
+
+    list = []
+    for i in range(len(botlot)):
+        list.append(getLoc(botlot[i]))
+
+    for i in range(len(tgtlot)):
+        list.append(getLoc(tgtlot[i]))
+
+    return list
+
+
+def getLoc(obj):
+    tX = obj.getCenter().getX()
+    tY = obj.getCenter().getY()
+    return (tX, tY)
