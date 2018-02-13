@@ -1,16 +1,6 @@
-from graphics import *
 from botntgtbuilder import *
 
 def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
-
-    #set up coordinate variables (it makes changing easier if we only have to change these vars)
-    '''
-    xlower = 0
-    xupper = 100
-    ylower = 0
-    yupper = 100
-    winborder = 10
-    '''
 
     ##Create visuals##
     #create window
@@ -65,34 +55,20 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 
 #####################################################################
 
-
 def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
     while True:
 
         for i in range(len(botlot)):
 
             xstep, ystep = safeMovBotRandom(botlot[i], xupper) #still just random movement, but safe check too
-
-            checkLoc(botlot[i], xstep, ystep)
+            checkLoc(botlot[i], xstep, ystep) #here is what moves us, see botntgtbuilder.py
 
             if checkTargetFound(botlot[i], tgtlot, tgtloclist):
                 yield env.timeout(timestep)
 
-            '''#moved into function checkTargetFound (above)
-            if (updateBot(botlot[i]) in tgtloclist) and ( tgtlot[tgtloclist.index(updateBot(botlot[i]))].config["outline"] ==  botlot[i].config["fill"]):
-
-                print('target found')
-                tgtlot[tgtloclist.index(updateBot(botlot[i]))].undraw()
-                tgtlot.pop(tgtloclist.index(updateBot(botlot[i])))
-                tgtloclist.pop(tgtloclist.index(updateBot(botlot[i])))
-                yield env.timeout(timestep)
-
               #  print('The bot is at %d, %d' %updateCo(botlot[i]))
               #  print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
-              '''
+
             yield env.timeout(timestep)
 
 #####################################################################
-
-#def storevisit(bot, loc):
-

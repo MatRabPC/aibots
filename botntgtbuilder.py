@@ -1,20 +1,17 @@
 from graphics import *
+from spillfunctions import *
 import random
 import math
 
+tgtradius = 1
+botradius = 1
+
 '''
 Building Stuff
-
-
-def buildbotr(win, clr, x, y):
-    bot = Circle(Point(x, y), radius = 1)
-    bot.setFill(clr)
-    bot.setOutline('white')
-    bot.draw(win)
-
-    return bot
 '''
 
+
+#builds bot
 class Bots(object):
     visited = []
     tgts = 0
@@ -22,14 +19,14 @@ class Bots(object):
     config = []
 
     # The class "constructor" - It's actually an initializer
-    def __init__(self, win, clr, x, y):
-        self.bot = Circle(Point(x, y), radius=1)
+    def __init__(self, win, clr, x, y, notgts):
+        self.bot = Circle(Point(x, y), radius=botradius)
         self.bot.setFill(clr)
         self.bot.setOutline('white')
         self.bot.draw(win)
         self.visited.append([x,y])
+        self.tgts = notgts
         self.config = self.bot.config
-      #-0  self.tgts = tgts
 
     def getCenter(self):
         return self.bot.getCenter()
@@ -37,20 +34,24 @@ class Bots(object):
     def move(self, x, y):
         return self.bot.move(x, y)
 
-def make_bot(win, clr, x, y):
-    bot = Bots(win, clr, x, y)
+def make_bot(win, clr, x, y, notgts):
+    bot = Bots(win, clr, x, y, notgts)
     return bot
 
+
+''''''
+#build target
 def buildtgtr(win, clr, x, y):
 
-    tgt = Circle(Point(x, y), radius = 1)
+    tgt = Circle(Point(x, y), radius = tgtradius)
     tgt.setFill('#000')
     tgt.setOutline(clr)
     tgt.draw(win)
 
     return tgt
 
-
+''''''
+#attempts to build all required targets and bots without them spawning on top of each other/illegally
 def aifactory(win, colours, nobot, notgt):
 
     lower = 0
@@ -89,14 +90,12 @@ def aifactory(win, colours, nobot, notgt):
             xtemp = random.randint(3, 10)
             ytemp = random.randint(3, 10)
 
-
-
             if (xtemp, ytemp) in loclist or loopinters((xtemp, ytemp), loclist):
                 xtemp = -1
                 ytemp = -1
                 print loclist, xtemp  # (xtemp, ytemp)[0]
 
-        botlot[i] = make_bot(win, colours[i], xtemp, ytemp)
+        botlot[i] = make_bot(win, colours[i], xtemp, ytemp, notgt)
         loclist.append((botlot[i].bot.getCenter().getX(), botlot[i].bot.getCenter().getY()))
         xtemp = -1
         ytemp = -1
@@ -110,21 +109,24 @@ def aifactory(win, colours, nobot, notgt):
 '''
 functions
 '''
+#checks if the target we found belongs to the bot--if true, picks up and removes target, lowers Bot tgt counter--
+# if false, returns false (so that, if there is a communication channel, we can tell the other bots what we found)
+def checkTargetFound(bot, tgtlot, tgtloclist):
 
-def loopinters(obj, lst):
+    if (getLoc(bot) in tgtloclist) and (
+        tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] == bot.config["fill"]):
 
-    for i in range(len(lst)):
-        if pointinter(obj, lst[i], 1):
-        #if objinter(obj.getCenter(), lst[i], 2):
-            return True
-    return False
+        print('target found')
+        tgtlot[tgtloclist.index(getLoc(bot))].undraw()
+        tgtlot.pop(tgtloclist.index(getLoc(bot)))
+        tgtloclist.pop(tgtloclist.index(getLoc(bot)))
+        bot.tgts = bot.tgts - 1
 
-def pointinter(obj1, obj2, r):
-
-    distance = ((obj1[0] - obj2[0]) ** 2 + (obj1[1] - obj2[1]) ** 2) ** 0.5
-    return distance < r + r
+        return True
+    return False #return tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] #returns target outline colour
 
 
+#checks if movement is within bounds
 def safeMovBotRandom(bot, sizeof):
     # randomize movement, check if within border until safe to move
     xstep = randMov()
@@ -137,19 +139,11 @@ def safeMovBotRandom(bot, sizeof):
     return xstep, ystep
 
 
-def checkLoc(bot, xstep, ystep):
+#supposed to add location to list of visited locations, then move. to be fixed
+def checkLoc(bot, xstep, ystep): #needs adjustment
 
     bot.visited.append((xstep, ystep))
     bot.move(xstep, ystep)
-
-
-
-def checkMovLegal(x, y, sizeof):
-    #the +2 is to accomodate for the radius of the bot
-    if x < 0+2 or x > sizeof-2 or y < 0+2 or y > sizeof-2:
-        return False
-    else:
-        return True
 
 
 # return either -1, 0 or 1
@@ -158,35 +152,17 @@ def randMov():
     return rn
 
 
-#get robot co-ordinates
-def updateBot(bot):
-    rX = bot.getCenter().getX()
-    rY = bot.getCenter().getY()
-    return rX, rY
-
-
-#return random coordinates in the window
-def randSpawn(limit):
-    rn = random.randint(0, limit)
-    return rn
-
 #return x and y position of circle objects
 def updateCo(obj):
     oX = obj.getCenter().getX()
     oY = obj.getCenter().getY()
     return oX, oY
 
+
 #detect collision
 def colDet(obj1, obj2):
     dist = math.sqrt((obj1.getCenter().getX() - obj2.getCenter().getX()) ** 2 + (obj1.getCenter().getY() - obj2.getCenter().getY()) ** 2)
     return dist
-
-
-#get target co-ordinates
-def updateTgt(tgt):
-    tX = tgt.getCenter().getX()
-    tY = tgt.getCenter().getY()
-    return tX, tY
 
 
 def checkVisited(bot, x, y):
@@ -199,46 +175,3 @@ def checkVisited(bot, x, y):
 
     return False
 
-
-
-def getLocList(botlot, tgtlot):
-
-    list = []
-    for i in range(len(botlot)):
-        list.append(getLoc(botlot[i]))
-
-    for i in range(len(tgtlot)):
-        list.append(getLoc(tgtlot[i]))
-
-    return list
-
-
-def getTgtList(tgtlot):
-
-    list = []
-
-    for i in range(len(tgtlot)):
-        list.append(getLoc(tgtlot[i]))
-
-    return list
-
-
-def getLoc(obj):
-    tX = obj.getCenter().getX()
-    tY = obj.getCenter().getY()
-    return (tX, tY)
-
-
-
-def checkTargetFound(botlot, tgtlot, tgtloclist):
-
-    if (updateBot(botlot) in tgtloclist) and (
-        tgtlot[tgtloclist.index(updateBot(botlot))].config["outline"] == botlot.config["fill"]):
-
-        print('target found')
-        tgtlot[tgtloclist.index(updateBot(botlot))].undraw()
-        tgtlot.pop(tgtloclist.index(updateBot(botlot)))
-        tgtloclist.pop(tgtloclist.index(updateBot(botlot)))
-
-        return True
-    return False

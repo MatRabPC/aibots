@@ -1,6 +1,5 @@
 import simpy
 from environmentbuilder import *
-from botntgtbuilder import *
 
 ################################################################################################ VARS
 
@@ -8,8 +7,6 @@ xlower, xupper, ylower, yupper = 0, 30, 0, 30
 #xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
 totalruntime = 500 #amount of steps the system will run for
 timestep = 1 #amount of steps the project will take
-tgtradius = 0.5
-botradius = 2
 nobot = 2
 notgt = 2
 colours = ['blue', 'red', 'green', 'yellow', 'orange']
