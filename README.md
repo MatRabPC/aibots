@@ -1,9 +1,7 @@
-Goals for Feb 6 - Feb 12
-- Modualize design/Merge Code (Samina)
-- Bot's and their targets running on their own thread (Anthea)
-- Radar that detects objects/what kind of object (Samina & Matt)
-- make outlines thicker?
-- ask if, when bot finds all its respective targets, does it disappear or stop moving?
+Goals for Feb 13 - Feb 26th
+- Radar (Samina)
+- Guided bot movement (Matt)
+- Communication (Anthea)
 
 Work done
 January 22nd - January 28th
@@ -19,6 +17,11 @@ Jan 29th - Feb 4th
 - Bounded bot movement (Samina)
 - Improved Collision (Matt)
 - Randomized target spawn (Matt)
+
+Feb 6 - Feb 12
+- Modualize design/Merge Code (Samina)
+- make outlines thicker?
+- ask if, when bot finds all its respective targets, does it disappear or stop moving?
 
 Matt's Opening Notes
 This program will use SimPy, so having pip installed will be very useful.
