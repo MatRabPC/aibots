@@ -23,6 +23,10 @@ Feb 6 - Feb 12
 - make outlines thicker?
 - ask if, when bot finds all its respective targets, does it disappear or stop moving?
 
+
+DELIVERABLES
+.csv should output G9_1.csv and G9_2.csv
+
 Matt's Opening Notes
 This program will use SimPy, so having pip installed will be very useful.
 Check if you have pip: https://dev.to/el_joft/installing-pip-on-windows
