@@ -3,6 +3,16 @@ Goals for Feb 13 - Feb 26th
 - Guided bot movement (Matt)
 - Communication (Anthea)
 
+
+Work Still To Be Done
+- Bot Collision detection & Avoidance
+- Radar detecting the border, bots and targets
+- Bot communication and movement to certain areas
+- memories so bots don't move in the same spot multiple times
+- win state and communicating that to other bots
+- calculate iteration, targets collected, happiness, competitivness and more
+
+
 Work done
 January 22nd - January 28th
 - Git Repo made
