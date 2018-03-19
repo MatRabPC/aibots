@@ -56,6 +56,7 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 #####################################################################
 
 def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
+
     while True:
 
         for i in range(len(botlot)):

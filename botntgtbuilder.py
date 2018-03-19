@@ -10,7 +10,6 @@ botradius = 1
 Building Stuff
 '''
 
-
 #builds bot
 class Bots(object):
     visited = []
@@ -30,6 +29,9 @@ class Bots(object):
 
     def getCenter(self):
         return self.bot.getCenter()
+
+    def getRadius(self):
+        return self.bot.getRadius()
 
     def move(self, x, y):
         return self.bot.move(x, y)
@@ -51,6 +53,75 @@ def buildtgtr(win, clr, x, y):
     return tgt
 
 ''''''
+def inCircle(pt1, circ):
+
+    # get the distance between pt1 and circ using the
+    # distance formula
+    dx = pt1.getX() - circ.getCenter().getX()
+    dy = pt1.getY() - circ.getCenter().getY()
+    dist = math.sqrt(dx*dx + dy*dy)
+
+    # check whether the distance is less than the radius
+    return dist <= circ.getRadius()
+
+
+
+def initbot(win, colours, nobot, notgt):
+    tgtlot = []  # [None] * nobot #botlist
+
+    tgtlot.append(buildtgtr(win, colours[0], random.randint(3, 10), random.randint(3, 10)))  # first bot
+
+    for i in range(1, notgt):  # make each bot
+
+        xtemp = random.randint(3, 10)
+        ytemp = random.randint(3, 10)  # make point
+
+        for j in range(len(tgtlot)):
+            if inCircle(Point(xtemp, ytemp), tgtlot[j]):  # check if valid
+                # if not, change points
+                xtemp = random.randint(3, 10)
+                ytemp = random.randint(3, 10)
+
+            else:  # if valid ,make bot and set flag
+                tgtlot.append(buildtgtr(win, colours[i], xtemp, ytemp))  # first tgt
+                xtemp = -1
+
+            if xtemp == -1:
+                break
+
+        print 'break'
+
+    botlot = []#[None] * nobot #botlist
+
+    botlot.append(make_bot(win, colours[0], random.randint(3, 10), random.randint(3, 10), notgt)) #first bot
+
+    for i in range(1, nobot): #make each bot
+
+        xtemp = random.randint(3, 10)
+        ytemp = random.randint(3, 10) #make point
+
+        for j in range(len(botlot)):
+            if inCircle(Point(xtemp, ytemp), botlot[j]): #check if valid
+                #if not, change points
+                xtemp = random.randint(3, 10)
+                ytemp = random.randint(3, 10)
+
+            else: #if valid ,make bot and set flag
+                botlot.append(make_bot(win, colours[i], xtemp, ytemp, notgt))  # first bot
+                xtemp = -1
+
+            if xtemp == -1:
+                break
+
+        print 'break'
+
+    return botlot, tgtlot
+
+
+
+
+
+
 #attempts to build all required targets and bots without them spawning on top of each other/illegally
 def aifactory(win, colours, nobot, notgt):
 
