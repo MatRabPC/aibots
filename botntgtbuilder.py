@@ -1,5 +1,4 @@
 from graphics import *
-from spillfunctions import *
 import random
 import math
 
@@ -16,6 +15,8 @@ class Bots(object):
     tgts = 0
     bot = None
     config = []
+    radarRadius = 3
+    commCo = []
 
     # The class "constructor" - It's actually an initializer
     def __init__(self, win, clr, x, y, notgts):
@@ -26,6 +27,9 @@ class Bots(object):
         self.visited.append([x,y])
         self.tgts = notgts
         self.config = self.bot.config
+        self.radar = Circle(Point(x, y), radius= self.radarRadius)
+        self.radar.setOutline('cyan')
+        self.radar.draw(win)
 
     def getCenter(self):
         return self.bot.getCenter()
@@ -52,131 +56,6 @@ def buildtgtr(win, clr, x, y):
 
     return tgt
 
-''''''
-def inCircle(pt1, circ):
-
-    # get the distance between pt1 and circ using the
-    # distance formula
-    dx = pt1.getX() - circ.getCenter().getX()
-    dy = pt1.getY() - circ.getCenter().getY()
-    dist = math.sqrt(dx*dx + dy*dy)
-
-    # check whether the distance is less than the radius
-    return dist <= circ.getRadius()
-
-
-
-def initbot(win, colours, nobot, notgt):
-    tgtlot = []  # [None] * nobot #botlist
-
-    tgtlot.append(buildtgtr(win, colours[0], random.randint(3, 10), random.randint(3, 10)))  # first bot
-
-    for i in range(1, notgt):  # make each bot
-
-        xtemp = random.randint(3, 10)
-        ytemp = random.randint(3, 10)  # make point
-
-        for j in range(len(tgtlot)):
-            if inCircle(Point(xtemp, ytemp), tgtlot[j]):  # check if valid
-                # if not, change points
-                xtemp = random.randint(3, 10)
-                ytemp = random.randint(3, 10)
-
-            else:  # if valid ,make bot and set flag
-                tgtlot.append(buildtgtr(win, colours[i], xtemp, ytemp))  # first tgt
-                xtemp = -1
-
-            if xtemp == -1:
-                break
-
-        print 'break'
-
-    botlot = []#[None] * nobot #botlist
-
-    botlot.append(make_bot(win, colours[0], random.randint(3, 10), random.randint(3, 10), notgt)) #first bot
-
-    for i in range(1, nobot): #make each bot
-
-        xtemp = random.randint(3, 10)
-        ytemp = random.randint(3, 10) #make point
-
-        for j in range(len(botlot)):
-            if inCircle(Point(xtemp, ytemp), botlot[j]): #check if valid
-                #if not, change points
-                xtemp = random.randint(3, 10)
-                ytemp = random.randint(3, 10)
-
-            else: #if valid ,make bot and set flag
-                botlot.append(make_bot(win, colours[i], xtemp, ytemp, notgt))  # first bot
-                xtemp = -1
-
-            if xtemp == -1:
-                break
-
-        print 'break'
-
-    return botlot, tgtlot
-
-
-
-
-
-
-#attempts to build all required targets and bots without them spawning on top of each other/illegally
-def aifactory(win, colours, nobot, notgt):
-
-    lower = 0
-    upper = win.getHeight()
-    botlot = [None] * nobot
-    tgtlot = [None] * (nobot * notgt)
-    loclist = list()
-    xtemp = -1
-    ytemp = -1
-    tgton = 0
-
-    for i in range(nobot):
-        for j in range(notgt):
-            while xtemp < 0:
-                xtemp = random.randint(3, 10)
-                ytemp = random.randint(3, 10)
-
-               # print (xtemp, ytemp)[0]
-
-                if (xtemp, ytemp) in loclist or loopinters((xtemp, ytemp), loclist):
-                    xtemp = -1
-                    ytemp = -1
-
-            tgtlot[tgton] = buildtgtr(win, colours[i], xtemp, ytemp)
-            loclist.append((tgtlot[j+i].getCenter().getX(), tgtlot[j+i].getCenter().getY()))
-            tgton += 1
-            print "Appened", tgtlot[j+i]
-            print tgtlot
-            xtemp = -1
-            ytemp = -1
-
-    print tgtlot
-
-    for i in range(nobot):
-        while xtemp < 0:
-            xtemp = random.randint(3, 10)
-            ytemp = random.randint(3, 10)
-
-            if (xtemp, ytemp) in loclist or loopinters((xtemp, ytemp), loclist):
-                xtemp = -1
-                ytemp = -1
-                print loclist, xtemp  # (xtemp, ytemp)[0]
-
-        botlot[i] = make_bot(win, colours[i], xtemp, ytemp, notgt)
-        loclist.append((botlot[i].bot.getCenter().getX(), botlot[i].bot.getCenter().getY()))
-        xtemp = -1
-        ytemp = -1
-        #botlot[i] = buildbot(win, colours[i])
-
-    print tgtlot
-
-    return botlot, tgtlot
-
-
 '''
 functions
 '''
@@ -197,45 +76,6 @@ def checkTargetFound(bot, tgtlot, tgtloclist):
     return False #return tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] #returns target outline colour
 
 
-#checks if movement is within bounds
-def safeMovBotRandom(bot, sizeof):
-    # randomize movement, check if within border until safe to move
-    xstep = randMov()
-    ystep = randMov()
-
-    while ( ( not checkMovLegal(xstep + bot.getCenter().getX(), ystep + +bot.getCenter().getY(), sizeof) ) and ( not checkVisited(bot, xstep + bot.getCenter().getX(), ystep + +bot.getCenter().getY())) ):
-        xstep = randMov()
-        ystep = randMov()
-
-    return xstep, ystep
-
-
-#supposed to add location to list of visited locations, then move. to be fixed
-def checkLoc(bot, xstep, ystep): #needs adjustment
-
-    bot.visited.append((xstep, ystep))
-    bot.move(xstep, ystep)
-
-
-# return either -1, 0 or 1
-def randMov():
-    rn = random.randint(-1, 1)
-    return rn
-
-
-#return x and y position of circle objects
-def updateCo(obj):
-    oX = obj.getCenter().getX()
-    oY = obj.getCenter().getY()
-    return oX, oY
-
-
-#detect collision
-def colDet(obj1, obj2):
-    dist = math.sqrt((obj1.getCenter().getX() - obj2.getCenter().getX()) ** 2 + (obj1.getCenter().getY() - obj2.getCenter().getY()) ** 2)
-    return dist
-
-
 def checkVisited(bot, x, y):
 
    # print bot.visited
@@ -246,3 +86,175 @@ def checkVisited(bot, x, y):
 
     return False
 
+
+
+
+def getAllPointsInRadius(bot, lst):
+
+    cx = int(bot.getCenter().getX())
+    cy = int(bot.getCenter().getY())
+    r = bot.radar.getRadius()# + 2
+    points = []
+    print cx, cy
+
+    for i in range(cx-r, cx+r):
+        for j in range(cy-r, cy+r):
+            x = i-bot.getRadius()
+            y = j - bot.getRadius()
+
+            #if (i-r > 0 and j - r > 0):
+            if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
+                #points.append(Point(i,j)) #if within, append as Point
+                if (i,j) in lst:
+                    print "Found you @ ", (i, j)
+                    return (i, j)
+    return False
+
+
+def checkTargetWho(point, lst, tgts, bot):
+
+        co = tgts[lst.index(point)].config["outline"]
+    #    co = tgt[lst.index(getLoc(point))].config["outline"] == bot.config["fill"]):
+
+        if co == bot.config["fill"]:
+            bot.commCo = point
+            '''
+            print('target found')
+            tgts[lst.index(point)].undraw()
+            tgts.pop(lst.index(point))
+            lst.pop(lst.index(point))
+            bot.tgts = bot.tgts - 1
+'''
+       # else:
+
+
+     #   return True
+    #return False #return tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] #returns target outline colour
+
+
+
+
+def radarCheck(bot, tgtlst):
+    #return True
+
+    frontx = bot.radar.getCenter().getX() + bot.radar.getRadius()
+    backx = bot.radar.getCenter().getX() - bot.radar.getRadius()
+    fronty = bot.radar.getCenter().getY() + bot.radar.getRadius()
+    backy = bot.radar.getCenter().getY() - bot.radar.getRadius()
+
+   # print radar2(bot, 3)
+
+    po = [(frontx, fronty), (frontx, backy), (backx, fronty), (backx, backy)]
+    print po
+
+    for i in range(4):
+        #Point(po[i][0], po[i][1]).draw
+        if po[i] in tgtlst:
+            print "Found you at", po[i]
+            return True
+
+    return False
+   # print bot.getCenter(), xf, xb, yf, yb
+
+
+
+
+def boundaryCheck(bot, step):
+    x = bot.getCenter().getX()
+    y = bot.getCenter().getY()
+
+#    radarCheck(bot)
+    if (x+step[0] < 2 or x+step[0] > 15) and (y+step[1] < 2 or y+step[1] > 15):
+        return False
+    return True
+
+
+def safeMove(bot):
+    if len(bot.commCo) > 1:
+        print "By commCO path"
+        return moveByPath(bot)
+
+    x,y = random.randint(-1,1), random.randint(-1,1)
+    while (not boundaryCheck(bot, (x,y))):# or (not radarCheck(bot)):
+        x, y = random.randint(-1, 1), random.randint(-1, 1)
+
+    #print (x+bot.getCenter().getX(),y+bot.getCenter().getY())
+    return x, y
+
+
+def createPath(bot, point):
+    curr = (bot.getCenter().getX(), bot.getCenter().getY())
+    xsteps = []
+    ysteps = []
+    path = []
+
+
+    if point[0] - curr[0] > 0:
+        for i in range(int(point[0] - curr[0])):
+            xsteps.append(1)
+
+    if point[1] - curr[1] > 0:
+        for i in range(int(point[1] - curr[1])):
+            ysteps.append(1)
+
+    if len(xsteps) > len(ysteps):
+        for i in range(len(xsteps)):
+            if i < len(ysteps): #in range
+                path.append((xsteps[i], ysteps[i]))
+            else:
+                path.append((xsteps[i], 0))
+
+    if len(xsteps) < len(ysteps):
+        for i in range(len(ysteps)):
+            if i < len(ysteps): #in range
+                path.append((xsteps[i], ysteps[i]))
+            else:
+                path.append((0, ysteps[i]))
+
+    q=len(path)-1
+    path.append((path[q][0] - point[0], path[q][1] - point[1]))
+    bot.commCo = path
+    bot.tgtLoc = point
+
+    return path
+
+
+def moveByPath(bot):
+    nextx = bot.commCo[0][0] - bot.getCenter().getX()
+    nexty = bot.commCo[0][1] - bot.getCenter().getY()
+    coo = bot.commCo.pop(0)
+    print "Popped", coo
+
+    return coo[0], coo[1]
+    #return nextx, nexty
+
+
+
+'''
+'''
+
+
+def getLocList(botlot, tgtlot):
+
+    list = []
+    for i in range(len(botlot)):
+        list.append(getLoc(botlot[i]))
+
+    for i in range(len(tgtlot)):
+        list.append(getLoc(tgtlot[i]))
+
+    return list
+
+
+def getTgtList(tgtlot):
+
+    list = []
+    for i in range(len(tgtlot)):
+        list.append(getLoc(tgtlot[i]))
+    return list
+
+
+def getLoc(obj):
+    tX = obj.getCenter().getX()
+    tY = obj.getCenter().getY()
+    return (tX, tY)

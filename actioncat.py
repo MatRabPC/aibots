@@ -1,5 +1,7 @@
 import simpy
 from environmentbuilder import *
+
+'''
 from tester import *
 
 
@@ -12,48 +14,43 @@ def inRadar(win, bot, loclist):
             return True
 
     return False
-
+'''
 
 ################################################################################################ VARS
 
 xlower, xupper, ylower, yupper = 0, 30, 0, 30
 #xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
 totalruntime = 500 #amount of steps the system will run for
-timestep = 1 #amount of steps the project will take
-nobot = 2
-notgt = 2
+timestep = 2 #amount of steps the project will take
+nobot = 1
+notgt = 1
 colours = ['blue', 'red', 'green', 'yellow', 'orange']
+botlot = []
+tgtlot = []
 
 ################################################################################################ BUILDING
 
 win = envwindowbuilder(xlower, xupper, ylower, yupper, xupper/10)
-#botlot, tgtlot = aifactory(win, colours, nobot, notgt)
-tgtlot = [buildtgtr(win, 'green', 23, 25)]
-botlot = [make_bot(win, 'green', 23, 23, 1)]
 
-getAllPointsInRadius(botlot[0], win)
+for i in range(nobot):
+    for j in range(notgt):
+        tgtlot.append(buildtgtr(win, colours[i], 10, 10))#random.randint(3, 10), random.randint(3, 10)))
 
+for i in range(nobot):
+    botlot.append(make_bot(win, colours[i], 8,8, notgt))#random.randint(3, 10), random.randint(3, 10), notgt))
 
+#loclist = getLocList(botlot, tgtlot)
 
-
-#botlot, tgtlot = initbot(win, colours, nobot, notgt)
-loclist = getLocList(botlot, tgtlot)
 tgtloclist = getTgtList(tgtlot)
 
-#bot = make_bot(win, 'green', 23, 23)
-
+print tgtloclist
 win.getMouse() #waits on mouse click to begin
 
 ################################################################################################ JACK IN, MEGAMAN, EXECUTE
 
-#print(Point(5,10), botlot[1])
+#print boundaryCheck(botlot[0], (-10,-10))
 
-#k = make_bot(win, 'red', 10, 10, 2)
-
-#if inCircle(Point(10, 11), k):
-    #print 'fault'
-
-env = simpy.rt.RealtimeEnvironment(factor=0.07, strict=False) #movement time, **strict=false removes the realtime runtime error
+env = simpy.rt.RealtimeEnvironment(factor=0.5, strict=False) #movement time, **strict=false removes the realtime runtime error
 env.process(robots(env, timestep, botlot, tgtlot, xupper, tgtloclist))
 env.run(until=totalruntime)
 
