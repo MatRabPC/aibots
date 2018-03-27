@@ -59,7 +59,7 @@ def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
 
     while True:
 
-        for i in range(1):#len(botlot)):
+        for i in range(len(botlot)):
             #bot = botlot[i]
 
             xstep, ystep = safeMove(botlot[i])#BotRandom(botlot[i], xupper) #still just random movement, but safe check too
@@ -90,6 +90,15 @@ def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
 
               #  print('The bot is at %d, %d' %updateCo(botlot[i]))
               #  print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
+
+            if botlot[i].tgts == 0:
+                print botlot[i], "Targets Found"
+                del botlot[i]
+
+            if len(botlot) < 1:
+                yield env.timeout(timestep)
+                print "END"
+                break
 
             yield env.timeout(timestep)
 

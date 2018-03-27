@@ -6,6 +6,10 @@ tgtradius = 1
 botradius = 1
 
 '''
+If multiple targets belonging to one bot appear in its radar, it gets super confused and spazzes out
+'''
+
+'''
 Building Stuff
 '''
 
@@ -40,6 +44,9 @@ class Bots(object):
     def move(self, x, y):
         return self.bot.move(x, y)
 
+    def undraw(self):
+        self.bot.undraw()
+
 def make_bot(win, clr, x, y, notgts):
     bot = Bots(win, clr, x, y, notgts)
     return bot
@@ -70,45 +77,22 @@ def checkTargetFound(bot, tgtlot, tgtloclist):
         tgtlot[tgtloclist.index(getLoc(bot))].undraw()
         tgtlot.pop(tgtloclist.index(getLoc(bot)))
         tgtloclist.pop(tgtloclist.index(getLoc(bot)))
-        bot.tgts = bot.tgts - 1
+        bot.tgts = bot.tgts - 1 #reducing our bot's target count
 
         return True
     return False #return tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] #returns target outline colour
 
 
-def checkVisited(bot, x, y):
+def checkVisited(bot, x, y): #curently not being used
 
    # print bot.visited
     print (x,y)
 
-    if (x, y) in bot.visited:
+    if (x, y) in bot.visited: #check if in bot visited list
         return True
 
     return False
 
-
-
-
-def getAllPointsInRadius(bot, lst):
-
-    cx = int(bot.getCenter().getX())
-    cy = int(bot.getCenter().getY())
-    r = bot.radar.getRadius()# + 2
-    points = []
-    print cx, cy
-
-    for i in range(cx-r, cx+r):
-        for j in range(cy-r, cy+r):
-            x = i-bot.getRadius()
-            y = j - bot.getRadius()
-
-            #if (i-r > 0 and j - r > 0):
-            if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
-                #points.append(Point(i,j)) #if within, append as Point
-                if (i,j) in lst:
-                    print "Found you @ ", (i, j)
-                    return (i, j)
-    return False
 
 
 def checkTargetWho(point, lst, tgts, bot):
@@ -124,7 +108,7 @@ def checkTargetWho(point, lst, tgts, bot):
             tgts.pop(lst.index(point))
             lst.pop(lst.index(point))
             bot.tgts = bot.tgts - 1
-'''
+            '''
        # else:
 
 
@@ -134,52 +118,56 @@ def checkTargetWho(point, lst, tgts, bot):
 
 
 
-def radarCheck(bot, tgtlst):
-    #return True
-
-    frontx = bot.radar.getCenter().getX() + bot.radar.getRadius()
-    backx = bot.radar.getCenter().getX() - bot.radar.getRadius()
-    fronty = bot.radar.getCenter().getY() + bot.radar.getRadius()
-    backy = bot.radar.getCenter().getY() - bot.radar.getRadius()
-
-   # print radar2(bot, 3)
-
-    po = [(frontx, fronty), (frontx, backy), (backx, fronty), (backx, backy)]
-    print po
-
-    for i in range(4):
-        #Point(po[i][0], po[i][1]).draw
-        if po[i] in tgtlst:
-            print "Found you at", po[i]
-            return True
-
-    return False
-   # print bot.getCenter(), xf, xb, yf, yb
-
-
-
-
-def boundaryCheck(bot, step):
-    x = bot.getCenter().getX()
-    y = bot.getCenter().getY()
-
-#    radarCheck(bot)
-    if (x+step[0] < 2 or x+step[0] > 15) and (y+step[1] < 2 or y+step[1] > 15):
-        return False
-    return True
-
-
 def safeMove(bot):
     if len(bot.commCo) > 1:
         print "By commCO path"
         return moveByPath(bot)
 
     x,y = random.randint(-1,1), random.randint(-1,1)
-    while (not boundaryCheck(bot, (x,y))):# or (not radarCheck(bot)):
-        x, y = random.randint(-1, 1), random.randint(-1, 1)
+    #while (radarCheckBounds(bot)):
+        #boundaryCheck(bot, (x,y))):# or (not radarCheck(bot)):
+     #   x, y = random.randint(-1, 1), random.randint(-1, 1)
 
     #print (x+bot.getCenter().getX(),y+bot.getCenter().getY())
     return x, y
+
+
+'''
+build and follow path
+'''
+def getAllPointsInRadius(bot, lst):
+
+    cx = int(bot.getCenter().getX())
+    cy = int(bot.getCenter().getY())
+    r = bot.radar.getRadius()# + 2
+    points = []
+    print cx, cy
+
+    for i in range(cx-r, cx+r):
+        for j in range(cy-r, cy+r):
+            x = i-bot.getRadius()
+            y = j - bot.getRadius()
+
+            #if (i-r > 0 and j - r > 0):
+            if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
+                if radarCheckBounds(bot, (i,j)):
+                    print "Boundary detected"
+                #points.append(Point(i,j)) #if within, append as Point
+                if (i,j) in lst:
+                    print "Found you @ ", (i, j)
+                    return (i, j)
+
+    return False
+
+
+def radarCheckBounds(bot, point):
+
+    if (-1 == point[0]) or (-1 == point[1]) or (32 == point[0]) or (32 == point[1]): #we check if the bounds is in radius by checking the sides
+        #print "Boundary detected"
+        return True
+
+    return False
+   # print bot.getCenter(), xf, xb, yf, yb
 
 
 def createPath(bot, point):
@@ -206,13 +194,19 @@ def createPath(bot, point):
 
     if len(xsteps) < len(ysteps):
         for i in range(len(ysteps)):
-            if i < len(ysteps): #in range
+            if i < len(ysteps) and i < len(xsteps): #in range
                 path.append((xsteps[i], ysteps[i]))
             else:
                 path.append((0, ysteps[i]))
 
     q=len(path)-1
-    path.append((path[q][0] - point[0], path[q][1] - point[1]))
+
+    try:
+        path.append((path[q][0] - point[0], path[q][1] - point[1]))
+
+    except:
+        path.append((curr[0] - point[0], curr[1] - point[1]))
+
     bot.commCo = path
     bot.tgtLoc = point
 
@@ -231,6 +225,7 @@ def moveByPath(bot):
 
 
 '''
+build lists
 '''
 
 
