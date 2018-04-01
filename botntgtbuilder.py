@@ -17,6 +17,7 @@ Building Stuff
 class Bots(object):
     visited = []
     tgts = 0
+    tgtLoc = None
     bot = None
     config = []
     radarRadius = 3
@@ -78,6 +79,7 @@ def checkTargetFound(bot, tgtlot, tgtloclist):
         tgtlot.pop(tgtloclist.index(getLoc(bot)))
         tgtloclist.pop(tgtloclist.index(getLoc(bot)))
         bot.tgts = bot.tgts - 1 #reducing our bot's target count
+        bot.tgtLoc = None
 
         return True
     return False #return tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] #returns target outline colour
@@ -101,7 +103,7 @@ def checkTargetWho(point, lst, tgts, bot):
     #    co = tgt[lst.index(getLoc(point))].config["outline"] == bot.config["fill"]):
 
         if co == bot.config["fill"]:
-            bot.commCo = point
+            bot.tgtLoc = point
             '''
             print('target found')
             tgts[lst.index(point)].undraw()
@@ -155,7 +157,8 @@ def getAllPointsInRadius(bot, lst):
                 #points.append(Point(i,j)) #if within, append as Point
                 if (i,j) in lst:
                     print "Found you @ ", (i, j)
-                    return (i, j)
+                    if bot.tgtLoc is None:
+                        return (i, j)
 
     return False
 
@@ -175,8 +178,52 @@ def createPath(bot, point):
     xsteps = []
     ysteps = []
     path = []
+    x = int(point[0] - curr[0])
+    y = int(point[1] - curr[1])
+
+    if x > 0:
+        for i in range(abs(x)):
+            xsteps.append(1)
+
+    if x < 0:
+        for i in range(abs(x)):
+            xsteps.append(-1)
+
+    if y > 0:
+        for i in range(abs(y)):
+            ysteps.append(1)
+
+    if y < 0:
+        for i in range(abs(y)):
+            ysteps.append(-1)
+
+    if not x == 0:
+        for i in range(abs(x)):
+            path.append((xsteps[i], 0))
+
+   # print path
+
+    if not y == 0:
+        for i in range(abs(y)):
+            path.append((0, ysteps[i]))
+
+        if y > 0:
+            path.append((0, 1))
+
+        if y < 0:
+            path.append((0, -1))
+
+    if y == 0:
+        if x > 0:
+            path.append((1, 0))
+
+        if x < 0:
+            path.append((-1, 0))
 
 
+    #print path
+
+    '''
     if point[0] - curr[0] > 0:
         for i in range(int(point[0] - curr[0])):
             xsteps.append(1)
@@ -206,10 +253,11 @@ def createPath(bot, point):
 
     except:
         path.append((curr[0] - point[0], curr[1] - point[1]))
-
+    '''
     bot.commCo = path
     bot.tgtLoc = point
 
+    print path
     return path
 
 
