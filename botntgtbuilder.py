@@ -16,6 +16,7 @@ class Bots(object):
     dirX = 1
     dirY = 0
     vert = 1
+    stepsTaken = 0
 
     # The class "constructor" - It's actually an initializer
     def __init__(self, win, clr, x, y, notgts):
@@ -29,6 +30,8 @@ class Bots(object):
         self.radar = Circle(Point(x, y), radius=self.radarRadius)
         self.radar.setOutline('cyan')
         self.radar.draw(win)
+        self.horizon = 1
+        self.holdval = 1
 
     def getCenter(self):
         return self.bot.getCenter()
@@ -37,6 +40,7 @@ class Bots(object):
         return self.bot.getRadius()
 
     def move(self, x, y):
+        self.stepsTaken = self.stepsTaken + 1
         self.radar.move(x, y)
         return self.bot.move(x, y)
 
@@ -94,7 +98,7 @@ def checkTargetWho(point, lst, tgts, bot, botlot):
         co = tgts[lst.index(point)].config["outline"]
     #    co = tgt[lst.index(getLoc(point))].config["outline"] == bot.config["fill"]):
         print bot.config["fill"], "Found a", co , "target"
-        if co == bot.config["fill"]:
+        if co == bot.config["fill"] and bot.tgtLoc is None:
             bot.tgtLoc = point
             print createPath(bot, point)
            # return True
@@ -138,10 +142,11 @@ def getAllPointsInRadius(bot, lst, blst):
             if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
                 if (i,j) in lst:
                     print "Found you @ ", (i, j)
-                    if bot.tgtLoc is None:
-                        return (i, j)
+                    #if bot.tgtLoc is None:
+                    return (i, j)
+                   # return (i, j)
 
-                if (i, j) in blst:
+                if (i, j) in blst and ((cx - i) < 2):
                     runAwayBot(bot)
 
     return False
@@ -149,7 +154,7 @@ def getAllPointsInRadius(bot, lst, blst):
 def runAwayBot(bot):
     bot.dirX = bot.dirX * -1
 
-    
+
 def createPath(bot, point):
 
     curr = (bot.getCenter().getX(), bot.getCenter().getY())
@@ -245,3 +250,4 @@ def getLoc(obj):
     tX = obj.getCenter().getX()
     tY = obj.getCenter().getY()
     return (tX, tY)
+
