@@ -32,7 +32,6 @@ class Bots(object):
         self.vert = random.choice(updown)
         self.horizon = 1
         self.holdval = 1
-        self.crash = False
 
     def getCenter(self):
         return self.bot.getCenter()
@@ -119,13 +118,6 @@ def findWhoElseTarget(point, lst, tgts, bot, botlot):
 
 
 def safeMove(bot):
-    if bot.crash == True:
-        bot.horizon *= -1
-        bot.vert *= -1
-        bot.dirX = bot.horizon
-        bot.dirY = bot.vert
-        bot.crash = False
-        return bot.dirX, bot.dirY
     # Priority 1 - Locking bounds
     if bot.getCenter().getX() > 99:
         bot.dirX = -1
@@ -203,11 +195,6 @@ def getAllPointsInRadius(bot, lst, blst):
                     print "Found you @ ", (i, j)
                     if bot.tgtLoc is None:
                         return (i, j)
-
-                elif (i, j) in blst:
-                    bot.crash = True
-
-
 
     return False
 
