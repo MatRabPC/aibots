@@ -1,18 +1,8 @@
 from graphics import *
 import random
 
-tgtradius = 1
-botradius = 1
-
 publicChannel = []
 
-'''
-If multiple targets belonging to one bot appear in its radar, it gets super confused and spazzes out
-'''
-
-'''
-Building Stuff
-'''
 
 #builds bot
 class Bots(object):
@@ -21,7 +11,7 @@ class Bots(object):
     tgtLoc = None
     bot = None
     config = []
-    radarRadius = 7
+    radarRadius = 10
     commCo = []
     dirX = 1
     dirY = 0
@@ -29,7 +19,7 @@ class Bots(object):
 
     # The class "constructor" - It's actually an initializer
     def __init__(self, win, clr, x, y, notgts):
-        self.bot = Circle(Point(x, y), radius=botradius)
+        self.bot = Circle(Point(x, y), radius=1)
         self.bot.setFill(clr)
         self.bot.setOutline('white')
         self.bot.draw(win)
@@ -65,7 +55,7 @@ def make_bot(win, clr, x, y, notgts):
 #build target
 def buildtgtr(win, clr, x, y):
 
-    tgt = Circle(Point(x, y), radius = tgtradius)
+    tgt = Circle(Point(x, y), radius = 1)
     tgt.setFill('#000')
     tgt.setOutline(clr)
     tgt.draw(win)
@@ -78,8 +68,6 @@ functions
 #checks if the target we found belongs to the bot--if true, picks up and removes target, lowers Bot tgt counter--
 # if false, returns false (so that, if there is a communication channel, we can tell the other bots what we found)
 def checkTargetFound(bot, tgtlot, tgtloclist):
-
-    colours = ['blue', 'red', 'green', 'yellow', 'orange']
 
     if (getLoc(bot) in tgtloclist) and (
         tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] == bot.config["fill"]):
@@ -100,18 +88,6 @@ def botRemoveTarget(bot):
     bot.commCo = []
 
 
-def checkVisited(bot, x, y): #curently not being used
-
-   # print bot.visited
-    print (x,y)
-
-    if (x, y) in bot.visited: #check if in bot visited list
-        return True
-
-    return False
-
-
-
 def checkTargetWho(point, lst, tgts, bot, botlot):
 
         co = tgts[lst.index(point)].config["outline"]
@@ -124,11 +100,6 @@ def checkTargetWho(point, lst, tgts, bot, botlot):
 
         else:
             findWhoElseTarget(point, lst, tgts, bot, botlot)
-      #  no = tgts[lst.index(point)].config["outline"]
-
-
-     #   return True
-    #return False #return tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] #returns target outline colour
 
 
 def findWhoElseTarget(point, lst, tgts, bot, botlot):
@@ -148,11 +119,6 @@ def safeMove(bot):
         return moveByPath(bot)
 
     x,y = random.randint(-1,1), random.randint(-1,1)
-    #while (radarCheckBounds(bot)):
-        #boundaryCheck(bot, (x,y))):# or (not radarCheck(bot)):
-     #   x, y = random.randint(-1, 1), random.randint(-1, 1)
-
-    #print (x+bot.getCenter().getX(),y+bot.getCenter().getY())
     return x, y
 
 
@@ -164,19 +130,11 @@ def getAllPointsInRadius(bot, lst):
     cx = int(bot.getCenter().getX())
     cy = int(bot.getCenter().getY())
     r = bot.radar.getRadius()# + 2
-    points = []
-   # print cx, cy
 
     for i in range(cx-r, cx+r):
         for j in range(cy-r, cy+r):
-            x = i-bot.getRadius()
-            y = j - bot.getRadius()
 
-            #if (i-r > 0 and j - r > 0):
             if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
-                #if radarCheckBounds(bot, (i,j)):
-                 #   print "Boundary detected"
-                #points.append(Point(i,j)) #if within, append as Point
                 if (i,j) in lst:
                     print "Found you @ ", (i, j)
                     if bot.tgtLoc is None:
@@ -185,20 +143,7 @@ def getAllPointsInRadius(bot, lst):
     return False
 
 
-def radarCheckBounds(bot, point):
-
-    if (-1 == point[0]) or (-1 == point[1]) or (32 == point[0]) or (32 == point[1]): #we check if the bounds is in radius by checking the sides
-        #print "Boundary detected"
-        return True
-
-    return False
-   # print bot.getCenter(), xf, xb, yf, yb
-
-
 def createPath(bot, point):
-   # if not bot.commCo:
-    #    print "Busy going to", bot.tgtLoc
-     #   return False
 
     curr = (bot.getCenter().getX(), bot.getCenter().getY())
     xsteps = []
@@ -264,7 +209,6 @@ def moveByPath(bot):
     print "Popped", coo
 
     return coo[0], coo[1]
-    #return nextx, nexty
 
 
 
@@ -297,34 +241,3 @@ def getLoc(obj):
     tX = obj.getCenter().getX()
     tY = obj.getCenter().getY()
     return (tX, tY)
-
-'''
-def safeMove(bot):
-
-    if len(bot.commCo) > 1:
-        #if a target path exists, take target path first
-        print "By commCO path"
-        return moveByPath(bot)
-
-    #automated snake movement
-    if bot.getCenter().getY() > 95 or bot.getCenter().getY() < 5:
-        #invert vertical direction when at the top or bottom of graph
-        Bots.vert *= -1
-
-    if bot.getCenter().getX() < 5:
-        Bots.dirX = 0
-        Bots.dirY = Bots.vert
-        if bot.getCenter().getY() % 15  == 10:
-            Bots.dirX = 1
-            Bots.dirY = 0
-
-    elif bot.getCenter().getX() >= 95:
-        Bots.dirX = 0
-        Bots.dirY = Bots.vert
-        if bot.getCenter().getY() % 15 == 0 :
-            Bots.dirX = -1
-            Bots.dirY = 0
-
-    return Bots.dirX, Bots.dirY
-
-'''

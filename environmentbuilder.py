@@ -52,63 +52,46 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
     win.getMouse() #click to end set up pause
     return win
 
+winOrder = []
+
+def winCondition(win):
+    winList = Text(Point(50, 105), winOrder)
+    winList.setFill("white")
+    winList.setSize(25)
+    winList.draw(win)
+
+    win.getMouse()
+    quit()
+
 
 #####################################################################
 
-def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
+def robots(env, timestep, botlot, tgtlot, win, tgtloclist):
 
     while True:
-
-       # for i in range(len(botlot)):
-        #    print botlot[i].config["fill"], "going to", botlot[i].tgtLoc
-
-
         for i in range(len(botlot)):
             if botlot[i].tgts == 0:
                 continue
 
-         #   try:
-          #      if botlot[i].config["fill"] in publicChannel[0]:
-           #         createPath(botlot[i], publicChannel[publicChannel.index(botlot[i].config["fill"])][1])
 
-#            except:
- #               pass
-            #bot = botlot[i]
-
-            xstep, ystep = safeMove(botlot[i])#BotRandom(botlot[i], xupper) #still just random movement, but safe check too
-          #  print "XYstep:", xstep, ystep
+            xstep, ystep = safeMove(botlot[i])
             botlot[i].move(xstep, ystep)
-          #  botlot[i].radar.move(xstep, ystep)
             p = getAllPointsInRadius(botlot[i], tgtloclist)
-
-          #  print tgtlot
 
             if not p == False:
                 checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot)
-                #print createPath(botlot[i], p)
-              #  print p
-              #  botlot[i].move(botlot[i].commCo[0], botlot[i].commCo[1])
-              #  botlot[i].radar.move(botlot[i].commCo[0], botlot[i].commCo[1])
                 print "bot at:", botlot[i].getCenter()
-                
-           # if radarCheck(botlot[i], tgtloclist):
-                #time.sleep(5)
 
-            #checkLoc(botlot[i], xstep, ystep) #here is what moves us, see botntgtbuilder.py
 
             if checkTargetFound(botlot[i], tgtlot, tgtloclist):
                 yield env.timeout(timestep)
-                #if botlot[i].notgts == 0:
-                 #   break
-
-              #  print('The bot is at %d, %d' %updateCo(botlot[i]))
-              #  print('bot is %d away' %colDet(botlot[i], tgtlot[j]))
 
             if botlot[i].tgts == 0:
-                print botlot[i], "Targets Found"
-               # del botlot[i]
+                print botlot[i].config["fill"], "bot all targets found"
+                winOrder.append(botlot[i].config["fill"])
 
-
+            if len(winOrder) == 5:
+                winCondition(win)
 
             yield env.timeout(timestep)
 
