@@ -24,7 +24,7 @@ for i in range(nobot):
 for i in range(nobot):
     botlot.append(make_bot(win, colours[i], random.randint(3, 55), random.randint(3, 55), notgt))#random.randint(3, 10), random.randint(3, 10), notgt))
 
-#loclist = getLocList(botlot, tgtlot)
+botloclist = getLocList(botlot)
 
 tgtloclist = getTgtList(tgtlot)
 
@@ -34,7 +34,7 @@ win.getMouse() #waits on mouse click to begin
 ################################################################################################ JACK IN, MEGAMAN, EXECUTE
 
 env = simpy.rt.RealtimeEnvironment(factor=0.001, strict=False) #movement time, **strict=false removes the realtime runtime error
-env.process(robots(env, timestep, botlot, tgtlot, win, tgtloclist))
+env.process(robots(env, timestep, botlot, tgtlot, win, tgtloclist, botloclist))
 env.run(until=totalruntime)
 
 print('end of event')

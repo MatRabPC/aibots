@@ -66,7 +66,7 @@ def winCondition(win):
 
 #####################################################################
 
-def robots(env, timestep, botlot, tgtlot, win, tgtloclist):
+def robots(env, timestep, botlot, tgtlot, win, tgtloclist, botloclist):
 
     while True:
         for i in range(len(botlot)):
@@ -76,7 +76,7 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist):
 
             xstep, ystep = safeMove(botlot[i])
             botlot[i].move(xstep, ystep)
-            p = getAllPointsInRadius(botlot[i], tgtloclist)
+            p = getAllPointsInRadius(botlot[i], tgtloclist, botloclist)
 
             if not p == False:
                 checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot)

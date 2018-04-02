@@ -88,6 +88,7 @@ def botRemoveTarget(bot):
     bot.commCo = []
 
 
+
 def checkTargetWho(point, lst, tgts, bot, botlot):
 
         co = tgts[lst.index(point)].config["outline"]
@@ -125,7 +126,7 @@ def safeMove(bot):
 '''
 build and follow path
 '''
-def getAllPointsInRadius(bot, lst):
+def getAllPointsInRadius(bot, lst, blst):
 
     cx = int(bot.getCenter().getX())
     cy = int(bot.getCenter().getY())
@@ -140,9 +141,15 @@ def getAllPointsInRadius(bot, lst):
                     if bot.tgtLoc is None:
                         return (i, j)
 
+                if (i, j) in blst:
+                    runAwayBot(bot)
+
     return False
 
+def runAwayBot(bot):
+    bot.dirX = bot.dirX * -1
 
+    
 def createPath(bot, point):
 
     curr = (bot.getCenter().getX(), bot.getCenter().getY())
@@ -217,14 +224,11 @@ build lists
 '''
 
 
-def getLocList(botlot, tgtlot):
+def getLocList(botlot):
 
     list = []
     for i in range(len(botlot)):
         list.append(getLoc(botlot[i]))
-
-    for i in range(len(tgtlot)):
-        list.append(getLoc(tgtlot[i]))
 
     return list
 
