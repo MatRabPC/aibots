@@ -55,13 +55,13 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 
 winOrder = []
 
-def winCondition(win, botlot, iterationNum):
+def winCondition(win, botlot, iterationNum, scenario):
     winList = Text(Point(50, 105), winOrder)
     winList.setFill("white")
     winList.setSize(25)
     winList.draw(win)
 
-    fullMakeandWritetoCSV(botlot, 1, iterationNum)
+    fullMakeandWritetoCSV(botlot, scenario, iterationNum)
 
     win.getMouse()
 
@@ -72,7 +72,7 @@ def winCondition(win, botlot, iterationNum):
 
 #####################################################################
 
-def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum):
+def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenario):
     while True:
         for i in range(len(botlot)):
             if botlot[i].tgts == 0:
@@ -96,10 +96,18 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum):
                 botlot[i].removeFromBlst
                 winOrder.append(botlot[i].config["fill"])
 
+                #if we stop when one bot gets all its targets
+                '''
+                winCondition(win, botlot, iterationNum, scenario)
+                return 
+                '''
 
+            #if all bots collect all targets
             if len(winOrder) == 5:
-                winCondition(win, botlot, iterationNum)
+                winCondition(win, botlot, iterationNum, scenario)
                 return
+
+
 
             yield env.timeout(timestep)
 

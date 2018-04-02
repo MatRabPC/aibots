@@ -14,7 +14,9 @@ tgtlot = []
 
 ################################################################################################ BUILDING
 
-def actionKitty(iterationNum):
+def actionKitty(scenario, iterationNum):
+    print "Scenario:", scenario, "Iteration", iterationNum
+
     win = envwindowbuilder(xlower, xupper, ylower, yupper, xupper/10)
 
     for i in range(nobot):
@@ -34,11 +36,11 @@ def actionKitty(iterationNum):
     ################################################################################################ JACK IN, MEGAMAN, EXECUTE
 
     env = simpy.rt.RealtimeEnvironment(factor=0.0005, strict=False) #movement time, **strict=false removes the realtime runtime error
-    env.process(robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum))
+    env.process(robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenario))
     env.run(until=totalruntime)
 
     print('end of event')
-    winCondition(win, botlot, iterationNum)
+    winCondition(win, botlot, iterationNum, scenario)
 
     win.getMouse()
 
@@ -46,3 +48,10 @@ def actionKitty(iterationNum):
         botlot[i].undraw()
 
     win.close()
+
+
+    ''''
+    fix csv output
+    coordiante scenario rules
+    
+    '''
