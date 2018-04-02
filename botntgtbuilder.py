@@ -1,6 +1,7 @@
 from graphics import *
 import random
 
+blst = []
 publicChannel = []
 
 
@@ -11,7 +12,7 @@ class Bots(object):
     tgtLoc = None
     bot = None
     config = []
-    radarRadius = 10
+    radarRadius = 5
     commCo = []
     dirX = 1
     dirY = 0
@@ -30,6 +31,7 @@ class Bots(object):
         self.radar = Circle(Point(x, y), radius=self.radarRadius)
         self.radar.setOutline('cyan')
         self.radar.draw(win)
+        self.crash = False
         self.horizon = 1
         self.holdval = 1
 
@@ -42,6 +44,9 @@ class Bots(object):
     def move(self, x, y):
         self.stepsTaken = self.stepsTaken + 1
         self.radar.move(x, y)
+        blst.pop()
+        blst.append((self.bot.getCenter().getX(), self.bot.getCenter().getY()))
+     #   print blst
         return self.bot.move(x, y)
 
     def undraw(self):
@@ -50,8 +55,12 @@ class Bots(object):
     def getDir(self):
         return self.dirX, self.dirY
 
+    def removeFromBlst(self):
+        blst.remove(blst.index(self.bot.getCenter().getX(), self.bot.getCenter().getY()))
+
 def make_bot(win, clr, x, y, notgts):
     bot = Bots(win, clr, x, y, notgts)
+    blst.append((bot.getCenter().getX(), bot.getCenter().getY()))
     return bot
 
 
@@ -119,18 +128,79 @@ def findWhoElseTarget(point, lst, tgts, bot, botlot):
 
 
 def safeMove(bot):
+    '''
+    if bot.crash == True:
+        bot.horizon *= -1
+        bot.vert *= -1
+        bot.dirX = bot.horizon
+        bot.dirY = bot.vert
+        bot.crash = False
+        return bot.dirX, bot.dirY
+        '''
+    # Priority 1 - Locking bounds
+    if bot.getCenter().getX() > 99:
+        bot.dirX = -1
+        if bot.getCenter().getY() > 99:
+            bot.dirY = -1
+        if bot.getCenter().getY() < 1:
+            bot.dirY = 1
+            return bot.dirX, bot.dirY
+        return bot.dirX, bot.dirY
+    elif bot.getCenter().getX() < 1:
+        if bot.getCenter().getY() > 99:
+            bot.dirY = -1
+        if bot.getCenter().getY() < 1:
+            bot.dirY = 1
+        bot.dirX = 1
+        return bot.dirX, bot.dirY
+    elif bot.getCenter().getY() > 99:
+        bot.dirY = -1
+        if bot.getCenter().getX() > 99:
+            bot.dirX = -1
+        if bot.getCenter().getX() < 1:
+            bot.dirX = 1
+        return bot.dirX, bot.dirY
+    elif bot.getCenter().getY() < 1:
+        bot.dirY = 1
+        if bot.getCenter().getX() > 99:
+            bot.dirX = -1
+        if bot.getCenter().getX() < 1:
+            bot.dirX = 1
+        return bot.dirX, bot.dirY
+
+    #Priority 2 - Follow path to target
     if len(bot.commCo) > 1:
         print "By commCO path"
         return moveByPath(bot)
 
-    x,y = random.randint(-1,1), random.randint(-1,1)
-    return x, y
+    # Priotiy 3 - Automated 'snake' movement
+    if bot.getCenter().getY() == 99 or bot.getCenter().getY() == 1 :
+        #invert vertical direction when at the top or bottom of graph
+        bot.vert *= -1
+
+    if bot.getCenter().getY() < 95 or bot.getCenter().getY() > 5:
+        bot.dirX = bot.horizon
+        bot.dirY = 0
+
+    if bot.getCenter().getX() >= 99 or bot.getCenter().getX() <= 1:
+        bot.dirX = 0
+        bot.dirY = bot.vert
+        if bot.getCenter().getY() % 10 == 5 and bot.holdval == 1:
+            bot.holdval = -1
+            bot.horizon *= -1
+            bot.dirX = bot.horizon
+            bot.dirY = 0
+        elif bot.getCenter().getY() % 10 == 5 and bot.holdval == -1:
+            bot.holdval = 1
+
+    return bot.dirX, bot.dirY
+
 
 
 '''
 build and follow path
 '''
-def getAllPointsInRadius(bot, lst, blst):
+def getAllPointsInRadius(bot, lst):
 
     cx = int(bot.getCenter().getX())
     cy = int(bot.getCenter().getY())
@@ -142,17 +212,17 @@ def getAllPointsInRadius(bot, lst, blst):
             if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
                 if (i,j) in lst:
                     print "Found you @ ", (i, j)
-                    #if bot.tgtLoc is None:
-                    return (i, j)
-                   # return (i, j)
+                    if bot.tgtLoc is None:
+                        return (i, j)
 
-                if (i, j) in blst and ((cx - i) < 2):
-                    runAwayBot(bot)
+                elif (i, j) in blst and (abs(cx - i) > 5) and (abs(cy - j) > 5) and (not ((i, j) == (cx, cy))):
+                    bot.crash = True
+                    print bot.getCenter(), "finds", (i, j)
+                #    time.sleep(3)
+
+
 
     return False
-
-def runAwayBot(bot):
-    bot.dirX = bot.dirX * -1
 
 
 def createPath(bot, point):
@@ -235,6 +305,7 @@ def getLocList(botlot):
     for i in range(len(botlot)):
         list.append(getLoc(botlot[i]))
 
+
     return list
 
 
@@ -250,4 +321,3 @@ def getLoc(obj):
     tX = obj.getCenter().getX()
     tY = obj.getCenter().getY()
     return (tX, tY)
-

@@ -1,4 +1,5 @@
 from botntgtbuilder import *
+from deliverables import *
 
 def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 
@@ -54,20 +55,24 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
 
 winOrder = []
 
-def winCondition(win):
+def winCondition(win, botlot, iterationNum):
     winList = Text(Point(50, 105), winOrder)
     winList.setFill("white")
     winList.setSize(25)
     winList.draw(win)
 
+    fullMakeandWritetoCSV(botlot, 1, iterationNum)
+
     win.getMouse()
-    quit()
+
+
+
+
 
 
 #####################################################################
 
-def robots(env, timestep, botlot, tgtlot, win, tgtloclist, botloclist):
-
+def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum):
     while True:
         for i in range(len(botlot)):
             if botlot[i].tgts == 0:
@@ -76,7 +81,7 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist, botloclist):
 
             xstep, ystep = safeMove(botlot[i])
             botlot[i].move(xstep, ystep)
-            p = getAllPointsInRadius(botlot[i], tgtloclist, botloclist)
+            p = getAllPointsInRadius(botlot[i], tgtloclist)
 
             if not p == False:
                 checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot)
@@ -88,10 +93,13 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist, botloclist):
 
             if botlot[i].tgts == 0:
                 print botlot[i].config["fill"], "bot all targets found"
+                botlot[i].removeFromBlst
                 winOrder.append(botlot[i].config["fill"])
 
+
             if len(winOrder) == 5:
-                winCondition(win)
+                winCondition(win, botlot, iterationNum)
+                return
 
             yield env.timeout(timestep)
 

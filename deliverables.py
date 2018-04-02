@@ -17,24 +17,31 @@ k. Agent competitiveness: k=(f-h)/(g-h)
 text = []
 
 def fillLine(bot, scenario, iteration):
-    lineText = []
-    for i in range(5):
+    lineText = [6]
+    happiness = [6]
+    for i in range(1, 6):
         a = scenario
         b = iteration
         c = i
         d = getTargetsCollected(bot, 5)
         e = getSteps(bot)
         f = calculateHappiness(d, e)
-        lineText.append([a, b, c, d, e, f])
+        lineText.append([a, b, c, d, e])
+        happiness.append(f)
+        print lineText
 
-    for m in range(5):
-        g = maxHappiness(lineText[m])
-        h = minHappiness(lineText[m])
-        i = aveHappiness(lineText[m])
-        j = stdHappiness(lineText[m], i)
+    #print lineText[4]
+
+    for m in range(1, 6):
+        g = maxHappiness(happiness)
+        h = minHappiness(happiness)
+        i = aveHappiness(happiness)
+        j = stdHappiness(happiness, i)
         k = (f-h)/(g-h)
 
+        lineText[m].append([happiness[m],g, h, i, j, k])
 
+    return lineText
 
 
 
@@ -45,26 +52,32 @@ def getSteps(bot):
     return bot.stepsTaken
 
 def calculateHappiness(d, e):
-    return d/(e+1)
+    return round(float(d/(e+1.0)), 4)
 
 def agentCompetitiveness(f, h, g):
-    return (f-h)/(g-h)
+    return float((f-h)/(g-h))
 
 def maxHappiness(lst):
-    return max(lst[5])
+    return max(lst)
 
 def minHappiness(lst):
-    return min(lst[5])
+    return min(lst)
 
 def aveHappiness(lst):
-    return float(sum(lst[5])) / max(len(lst[5]), 1)
+    return round(float(sum(lst)) / max(len(lst), 1), 4)
 
 def stdHappiness(lst, mean):
-    return sqrt(sum((x - mean) ** 2 for x in lst) / len(lst))
+    return round(float(sqrt(sum((x - mean) ** 2 for x in lst) / len(lst))), 4)
+
+def writeToCSV(text):
+    with open('G9_1.csv','a') as file:
+        for line in text:
+            file.write(str(line))
+            file.write('\n')
 
 
-
-with open('csvfile.csv','wb') as file:
-    for line in text:
-        file.write(line)
-        file.write('\n')
+def fullMakeandWritetoCSV(botlot, scenario, iterationNum):
+    for i in range(len(botlot)):
+        a = fillLine(botlot[i], scenario, iterationNum)
+        print fillLine(botlot[i], scenario, iterationNum)
+        writeToCSV(a)
