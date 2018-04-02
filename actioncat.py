@@ -19,11 +19,11 @@ def inRadar(win, bot, loclist):
 ################################################################################################ VARS
 
 xlower, xupper, ylower, yupper = 0, 30, 0, 30
-#xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
-totalruntime = 500 #amount of steps the system will run for
+xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
+totalruntime = 5000 #amount of steps the system will run for
 timestep = 1 #amount of steps the project will take
-nobot = 2
-notgt = 2
+nobot = 5
+notgt = 5
 colours = ['blue', 'red', 'green', 'yellow', 'orange']
 botlot = []
 tgtlot = []
@@ -37,7 +37,7 @@ for i in range(nobot):
         tgtlot.append(buildtgtr(win, colours[i], random.randint(3, 15), random.randint(3, 15)))#random.randint(3, 10), random.randint(3, 10)))
 
 for i in range(nobot):
-    botlot.append(make_bot(win, colours[i], 8,8, notgt))#random.randint(3, 10), random.randint(3, 10), notgt))
+    botlot.append(make_bot(win, colours[i], random.randint(3, 55), random.randint(3, 5), notgt))#random.randint(3, 10), random.randint(3, 10), notgt))
 
 #loclist = getLocList(botlot, tgtlot)
 
@@ -50,7 +50,7 @@ win.getMouse() #waits on mouse click to begin
 
 #print boundaryCheck(botlot[0], (-10,-10))
 
-env = simpy.rt.RealtimeEnvironment(factor=0.5, strict=False) #movement time, **strict=false removes the realtime runtime error
+env = simpy.rt.RealtimeEnvironment(factor=0.001, strict=False) #movement time, **strict=false removes the realtime runtime error
 env.process(robots(env, timestep, botlot, tgtlot, xupper, tgtloclist))
 env.run(until=totalruntime)
 

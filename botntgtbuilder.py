@@ -4,6 +4,8 @@ import random
 tgtradius = 1
 botradius = 1
 
+publicChannel = []
+
 '''
 If multiple targets belonging to one bot appear in its radar, it gets super confused and spazzes out
 '''
@@ -117,6 +119,7 @@ def checkTargetWho(point, lst, tgts, bot, botlot):
         print bot.config["fill"], "Found a", co , "target"
         if co == bot.config["fill"]:
             bot.tgtLoc = point
+            print createPath(bot, point)
            # return True
 
         else:
@@ -131,9 +134,12 @@ def checkTargetWho(point, lst, tgts, bot, botlot):
 def findWhoElseTarget(point, lst, tgts, bot, botlot):
     colours = ['blue', 'red', 'green', 'yellow', 'orange']
     no = colours.index(tgts[lst.index(point)].config["outline"]) #bot no
-    createPath(botlot[no], point)
-    print bot.config["fill"], "to", colours[colours.index(tgts[lst.index(point)].config["outline"])], "your target is @", botlot[no].tgtLoc
-    print colours[colours.index(tgts[lst.index(point)].config["outline"])], "bot speaking, thanks for that, I'm heading via", botlot[no].commCo
+    #publicChannel.append((colours[no], point))
+    print colours[no], point
+    print createPath(botlot[no], point)
+    #createPath(botlot[no], point)
+    #print bot.config["fill"], "to", colours[colours.index(tgts[lst.index(point)].config["outline"])], "your target is @", botlot[no].tgtLoc
+    #print colours[colours.index(tgts[lst.index(point)].config["outline"])], "bot speaking, thanks for that, I'm heading via", botlot[no].commCo
 
 
 def safeMove(bot):

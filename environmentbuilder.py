@@ -59,13 +59,20 @@ def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
 
     while True:
 
-        for i in range(len(botlot)):
-            print botlot[i].config["fill"], "going to", botlot[i].tgtLoc
+       # for i in range(len(botlot)):
+        #    print botlot[i].config["fill"], "going to", botlot[i].tgtLoc
 
 
         for i in range(len(botlot)):
             if botlot[i].tgts == 0:
                 continue
+
+         #   try:
+          #      if botlot[i].config["fill"] in publicChannel[0]:
+           #         createPath(botlot[i], publicChannel[publicChannel.index(botlot[i].config["fill"])][1])
+
+#            except:
+ #               pass
             #bot = botlot[i]
 
             xstep, ystep = safeMove(botlot[i])#BotRandom(botlot[i], xupper) #still just random movement, but safe check too
@@ -78,7 +85,7 @@ def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
 
             if not p == False:
                 checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot)
-                print createPath(botlot[i], p)
+                #print createPath(botlot[i], p)
               #  print p
               #  botlot[i].move(botlot[i].commCo[0], botlot[i].commCo[1])
               #  botlot[i].radar.move(botlot[i].commCo[0], botlot[i].commCo[1])
