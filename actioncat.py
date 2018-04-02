@@ -22,7 +22,7 @@ xlower, xupper, ylower, yupper = 0, 30, 0, 30
 #xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
 totalruntime = 500 #amount of steps the system will run for
 timestep = 1 #amount of steps the project will take
-nobot = 1
+nobot = 2
 notgt = 2
 colours = ['blue', 'red', 'green', 'yellow', 'orange']
 botlot = []
@@ -50,7 +50,7 @@ win.getMouse() #waits on mouse click to begin
 
 #print boundaryCheck(botlot[0], (-10,-10))
 
-env = simpy.rt.RealtimeEnvironment(factor=0.1, strict=False) #movement time, **strict=false removes the realtime runtime error
+env = simpy.rt.RealtimeEnvironment(factor=0.5, strict=False) #movement time, **strict=false removes the realtime runtime error
 env.process(robots(env, timestep, botlot, tgtlot, xupper, tgtloclist))
 env.run(until=totalruntime)
 

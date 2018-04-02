@@ -60,18 +60,24 @@ def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
     while True:
 
         for i in range(len(botlot)):
+            print botlot[i].config["fill"], "going to", botlot[i].tgtLoc
+
+
+        for i in range(len(botlot)):
+            if botlot[i].tgts == 0:
+                continue
             #bot = botlot[i]
 
             xstep, ystep = safeMove(botlot[i])#BotRandom(botlot[i], xupper) #still just random movement, but safe check too
-            print "XYstep:", xstep, ystep
+          #  print "XYstep:", xstep, ystep
             botlot[i].move(xstep, ystep)
-            botlot[i].radar.move(xstep, ystep)
+          #  botlot[i].radar.move(xstep, ystep)
             p = getAllPointsInRadius(botlot[i], tgtloclist)
 
           #  print tgtlot
 
             if not p == False:
-                checkTargetWho(p, tgtloclist, tgtlot, botlot[i])
+                checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot)
                 print createPath(botlot[i], p)
               #  print p
               #  botlot[i].move(botlot[i].commCo[0], botlot[i].commCo[1])
@@ -93,12 +99,9 @@ def robots(env, timestep, botlot, tgtlot, xupper, tgtloclist):
 
             if botlot[i].tgts == 0:
                 print botlot[i], "Targets Found"
-                del botlot[i]
+               # del botlot[i]
 
-            if len(botlot) < 1:
-                yield env.timeout(timestep)
-                print "END"
-                break
+
 
             yield env.timeout(timestep)
 
