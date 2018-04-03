@@ -1,18 +1,3 @@
-Goals for Feb 13 - Feb 26th
-- Radar (Samina)
-- Guided bot movement (Matt)
-- Communication (Anthea)
-
-
-Work Still To Be Done
-- Bot Collision detection & Avoidance
-- Radar detecting the border, bots and targets
-- Bot communication and movement to certain areas
-- memories so bots don't move in the same spot multiple times
-- win state and communicating that to other bots
-- calculate iteration, targets collected, happiness, competitivness and more
-
-
 Work done
 January 22nd - January 28th
 - Git Repo made
@@ -30,21 +15,18 @@ Jan 29th - Feb 4th
 
 Feb 6 - Feb 12
 - Modualize design/Merge Code (Samina)
-- make outlines thicker?
-- ask if, when bot finds all its respective targets, does it disappear or stop moving?
+
+March 20 - March 26
+- Radar implemented (Samina)
+- Pathfinding (Matt)
+
+March 27th - April 2nd
+- refine movement (Matt)
+- Fix radar (Samina)
+- Stop bot crashing (Matt)
+- Export CSV files (Samina)
+- Switch between all three Scenarios (Samina)
 
 
 DELIVERABLES
 .csv should output G9_1.csv and G9_2.csv
-
-Matt's Opening Notes
-This program will use SimPy, so having pip installed will be very useful.
-Check if you have pip: https://dev.to/el_joft/installing-pip-on-windows
-Crash course on SimPy: https://simpy.readthedocs.io/en/latest/simpy_intro/index.html
-  ^ps this will take waaay longer than 10 minutes, but it has useful info on how to do interrupts and shared resources
-      which sounds super useful.
-  ^pps test.py has the code that i typed up from this if you don't want to type everything up
-  ^ppps this is the link to the full powa of SimPy: https://simpy.readthedocs.io/en/latest/topical_guides/index.html
-
-Personally I will be using PyCharm as a text editor so make sure you still have it from last semester I guess
-
