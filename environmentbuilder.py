@@ -99,15 +99,15 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenari
 
                 #if we stop when one bot gets all its targets
                 #'''
-                if scenario == 2:
-                    print "sc 2"
+                if scenario == 1 or scenario == 3:
+                   # print "sc 2"
                     winCondition(win, botlot, iterationNum, scenario)
                     return
                 #'''
 
             #if all bots collect all targets
-            if len(winOrder) == 5 and (scenario == 1 or scenario == 3):
-                print "Here"
+            if len(winOrder) == 5 and (scenario == 2):
+               # print "Here"
                 winCondition(win, botlot, iterationNum, scenario)
                 return
 

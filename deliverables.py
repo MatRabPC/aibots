@@ -78,7 +78,7 @@ def stdHappiness(lst, mean):
 def writeToCSV(text):
     with open('G9_1.csv','a') as file:
         for line in text:
-            file.write(str(line))
+            file.write(str(line)[1:-1])
             file.write('\n')
     file.close()
 
@@ -113,3 +113,4 @@ def fullMakeandWritetoCSV(botlot, scenario, iterationNum):
     a = fillLine(botlot, scenario, iterationNum)
     #print fillLine(botlot, scenario, iterationNum)
     writeToCSV(a)
+    return a

@@ -42,7 +42,7 @@ def actionKitty(scenario, iterationNum):
     env.run()
 
     print('end of event')
-    winCondition(win, botlot, iterationNum, scenario)
+    a = winCondition(win, botlot, iterationNum, scenario)
 
     for i in botlot:
         i.undraw()
@@ -55,6 +55,8 @@ def actionKitty(scenario, iterationNum):
     win.update()
 
     win.close()
+
+    return a
 
 
 
