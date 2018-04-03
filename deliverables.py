@@ -82,7 +82,7 @@ def writeToCSV(text):
             file.write('\n')
     file.close()
 
-    readCSV()
+  #  readCSV()
 
 def readCSV():
     i = []

@@ -2,20 +2,22 @@ import simpy
 from environmentbuilder import *
 
 ################################################################################################ VARS
-xlower, xupper, ylower, yupper = 0, 30, 0, 30
-xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
-totalruntime = 5000 #amount of steps the system will run for
-timestep = 1 #amount of steps the project will take
-nobot = 5
-notgt = 5
-colours = ['blue', 'red', 'green', 'yellow', 'orange']
-botlot = []
-tgtlot = []
+
 
 ################################################################################################ BUILDING
 
 def actionKitty(scenario, iterationNum):
     print "Scenario:", scenario, "Iteration", iterationNum
+
+    xlower, xupper, ylower, yupper = 0, 30, 0, 30
+    xlower, xupper, ylower, yupper = 0, 100, 0, 100  # larger field
+    totalruntime = 500000  # amount of steps the system will run for
+    timestep = 1  # amount of steps the project will take
+    nobot = 5
+    notgt = 5
+    colours = ['blue', 'red', 'green', 'yellow', 'orange']
+    botlot = []
+    tgtlot = []
 
     win = envwindowbuilder(xlower, xupper, ylower, yupper, xupper/10)
 
@@ -35,21 +37,26 @@ def actionKitty(scenario, iterationNum):
 
     ################################################################################################ JACK IN, MEGAMAN, EXECUTE
 
-    env = simpy.rt.RealtimeEnvironment(factor=0.0005, strict=False) #movement time, **strict=false removes the realtime runtime error
+    env = simpy.rt.RealtimeEnvironment(factor=0.0001, strict=False) #movement time, **strict=false removes the realtime runtime error
     env.process(robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenario))
-    env.run(until=totalruntime)
+    env.run()
 
     print('end of event')
     winCondition(win, botlot, iterationNum, scenario)
 
-    win.getMouse()
+    for i in botlot:
+        i.undraw()
 
-    for i in range(len(botlot)):
-        botlot[i].undraw()
+    for i in tgtlot:
+        i.undraw()
+
+    for item in win.items[:]:
+        item.undraw()
+    win.update()
 
     win.close()
 
-    
+
 
 
     ''''
