@@ -4,7 +4,7 @@ from environmentbuilder import *
 ################################################################################################ VARS
 xlower, xupper, ylower, yupper = 0, 30, 0, 30
 xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
-totalruntime = 500 #amount of steps the system will run for
+totalruntime = 5000 #amount of steps the system will run for
 timestep = 1 #amount of steps the project will take
 nobot = 5
 notgt = 5
@@ -48,6 +48,8 @@ def actionKitty(scenario, iterationNum):
         botlot[i].undraw()
 
     win.close()
+
+    
 
 
     ''''

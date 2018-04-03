@@ -1,4 +1,5 @@
 from math import sqrt
+import csv
 
 '''
 a. a= Scenario number (1,2 or 3)
@@ -14,21 +15,23 @@ j. j= Standard deviation of happiness in each iteration
 k. Agent competitiveness: k=(f-h)/(g-h)
 '''
 
-text = []
 
 def fillLine(bot, scenario, iteration):
-    lineText = [6]
-    happiness = [6]
+    t1 = []
+    t2 = []
+    happiness = []
+    lineText = []
+
     for i in range(1, 6):
         a = scenario
         b = iteration
-        c = i
-        d = getTargetsCollected(bot, 5)
-        e = getSteps(bot)
+        c = i#bot[i-1].config["fill"]
+        d = getTargetsCollected(bot[i-1], 5)
+        e = getSteps(bot[i-1])
         f = calculateHappiness(d, e)
-        lineText.append([a, b, c, d, e])
+        t1.append([a, b, c, d, e])
         happiness.append(f)
-        print lineText
+        print t1, happiness
 
     #print lineText[4]
 
@@ -39,7 +42,10 @@ def fillLine(bot, scenario, iteration):
         j = stdHappiness(happiness, i)
         k = (f-h)/(g-h)
 
-        lineText[m].append([happiness[m],g, h, i, j, k])
+        t2.append([happiness[m-1],g, h, i, j, k])
+
+    for i in range(5):
+        lineText.append([t1[i][0], t1[i][1], t1[i][2], t1[i][3], t1[i][4], happiness[i], t2[i][0], t2[i][1], t2[i][2], t2[i][3], t2[i][4]])
 
     return lineText
 
@@ -74,10 +80,36 @@ def writeToCSV(text):
         for line in text:
             file.write(str(line))
             file.write('\n')
+    file.close()
+
+    readCSV()
+
+def readCSV():
+    i = []
+    k = []
+    with open('G9_1.csv', 'rb') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in spamreader:
+            t = ', '.join(row)
+         #   print t.strip().split(",")
+            #line.append([t.split(',')])
+            line = t.split(',')
+            i.append(line[8])
+            k.append(line[10])
+    print i, k
+    csvfile.close()
+
+'''
+    with open('G9_2.csv','a') as file:
+        for line in i:
+            file.write(str(line))
+            file.write('\n')
+    file.close()
+    '''
 
 
 def fullMakeandWritetoCSV(botlot, scenario, iterationNum):
-    for i in range(len(botlot)):
-        a = fillLine(botlot[i], scenario, iterationNum)
-        print fillLine(botlot[i], scenario, iterationNum)
-        writeToCSV(a)
+  #  for i in range(len(botlot)):
+    a = fillLine(botlot, scenario, iterationNum)
+    #print fillLine(botlot, scenario, iterationNum)
+    writeToCSV(a)
