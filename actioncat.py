@@ -1,26 +1,10 @@
 import simpy
 from environmentbuilder import *
 
-'''
-from tester import *
-
-
-def inRadar(win, bot, loclist):
-
-    points = getAllPointsInRadius(bot, win)
-
-    for i in range(points):
-        if points[i] in loclist:
-            return True
-
-    return False
-'''
-
 ################################################################################################ VARS
-
-xlower, xupper, ylower, yupper = 0, 100, 0, 100
-#xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
-totalruntime = 5000 #amount of steps the system will run for
+xlower, xupper, ylower, yupper = 0, 30, 0, 30
+xlower, xupper, ylower, yupper = 0, 100, 0, 100 #larger field
+totalruntime = 50000 #amount of steps the system will run for
 timestep = 1 #amount of steps the project will take
 nobot = 5
 notgt = 5
@@ -30,29 +14,44 @@ tgtlot = []
 
 ################################################################################################ BUILDING
 
-win = envwindowbuilder(xlower, xupper, ylower, yupper, xupper/10)
+def actionKitty(scenario, iterationNum):
+    print "Scenario:", scenario, "Iteration", iterationNum
 
-for i in range(nobot):
-    for j in range(notgt):
-        tgtlot.append(buildtgtr(win, colours[i], random.randint(2, 98), random.randint(2, 98)))#random.randint(3, 10), random.randint(3, 10)))
+    win = envwindowbuilder(xlower, xupper, ylower, yupper, xupper/10)
 
-for i in range(nobot):
-    botlot.append(make_bot(win, colours[i], random.randint(5, 95), random.randint(5, 95), notgt))#random.randint(3, 10), random.randint(3, 10), notgt))
+    for i in range(nobot):
+        for j in range(notgt):
+            tgtlot.append(buildtgtr(win, colours[i], random.randint(1, 99), random.randint(1, 99)))#random.randint(3, 10), random.randint(3, 10)))
 
-#loclist = getLocList(botlot, tgtlot)
+    for i in range(nobot):
+        botlot.append(make_bot(win, colours[i], random.randint(1, 99), random.randint(1, 99), notgt))#random.randint(3, 10), random.randint(3, 10), notgt))
 
-tgtloclist = getTgtList(tgtlot)
+    botloclist = getLocList(botlot)
 
-print tgtloclist
-win.getMouse() #waits on mouse click to begin
+    tgtloclist = getTgtList(tgtlot)
 
-################################################################################################ JACK IN, MEGAMAN, EXECUTE
+    print tgtloclist
+    win.getMouse() #waits on mouse click to begin
 
-#print boundaryCheck(botlot[0], (-10,-10))
+    ################################################################################################ JACK IN, MEGAMAN, EXECUTE
 
-env = simpy.rt.RealtimeEnvironment(factor=0.02, strict=False) #movement time, **strict=false removes the realtime runtime error
-env.process(robots(env, timestep, botlot, tgtlot, xupper, tgtloclist))
-env.run(until=totalruntime)
+    env = simpy.rt.RealtimeEnvironment(factor=0.005, strict=False) #movement time, **strict=false removes the realtime runtime error
+    env.process(robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenario))
+    env.run(until=totalruntime)
 
-print('end of event')
-win.getMouse()
+    print('end of event')
+    winCondition(win, botlot, iterationNum, scenario)
+
+    win.getMouse()
+
+    for i in range(len(botlot)):
+        botlot[i].undraw()
+
+    win.close()
+
+
+    ''''
+    fix csv output
+    coordiante scenario rules
+    
+    '''

@@ -1,9 +1,9 @@
-
 from graphics import *
 import random
 
+blst = []
 publicChannel = []
-updown = [-1, 1]
+
 
 #builds bot
 class Bots(object):
@@ -14,6 +14,10 @@ class Bots(object):
     config = []
     radarRadius = 5
     commCo = []
+    dirX = 1
+    dirY = 0
+    vert = 1
+    stepsTaken = 0
 
     # The class "constructor" - It's actually an initializer
     def __init__(self, win, clr, x, y, notgts):
@@ -27,9 +31,7 @@ class Bots(object):
         self.radar = Circle(Point(x, y), radius=self.radarRadius)
         self.radar.setOutline('cyan')
         self.radar.draw(win)
-        self.dirX = 1
-        self.dirY = 0
-        self.vert = random.choice(updown)
+        self.crash = False
         self.horizon = 1
         self.holdval = 1
 
@@ -40,7 +42,11 @@ class Bots(object):
         return self.bot.getRadius()
 
     def move(self, x, y):
+        self.stepsTaken = self.stepsTaken + 1
         self.radar.move(x, y)
+        blst.pop(0)
+        blst.append((self.bot.getCenter().getX(), self.bot.getCenter().getY()))
+        print "blist: ", blst
         return self.bot.move(x, y)
 
     def undraw(self):
@@ -49,8 +55,12 @@ class Bots(object):
     def getDir(self):
         return self.dirX, self.dirY
 
+    def removeFromBlst(self):
+        blst.remove(blst.index(self.bot.getCenter().getX(), self.bot.getCenter().getY()))
+
 def make_bot(win, clr, x, y, notgts):
     bot = Bots(win, clr, x, y, notgts)
+    blst.append((bot.getCenter().getX(), bot.getCenter().getY()))
     return bot
 
 
@@ -75,7 +85,7 @@ def checkTargetFound(bot, tgtlot, tgtloclist):
     if (getLoc(bot) in tgtloclist) and (
         tgtlot[tgtloclist.index(getLoc(bot))].config["outline"] == bot.config["fill"]):
 
-        print('target found')
+        #print('target found')
         tgtlot[tgtloclist.index(getLoc(bot))].undraw()
         tgtlot.pop(tgtloclist.index(getLoc(bot)))
         tgtloclist.pop(tgtloclist.index(getLoc(bot)))
@@ -91,19 +101,20 @@ def botRemoveTarget(bot):
     bot.commCo = []
 
 
+
 def checkTargetWho(point, lst, tgts, bot, botlot):
 
         co = tgts[lst.index(point)].config["outline"]
     #    co = tgt[lst.index(getLoc(point))].config["outline"] == bot.config["fill"]):
         print bot.config["fill"], "Found a", co , "target"
-        if co == bot.config["fill"]:
+        if co == bot.config["fill"] and bot.tgtLoc is None:
             bot.tgtLoc = point
             print createPath(bot, point)
            # return True
-        '''
+
         else:
             findWhoElseTarget(point, lst, tgts, bot, botlot)
-'''
+
 
 def findWhoElseTarget(point, lst, tgts, bot, botlot):
     colours = ['blue', 'red', 'green', 'yellow', 'orange']
@@ -114,7 +125,6 @@ def findWhoElseTarget(point, lst, tgts, bot, botlot):
     #createPath(botlot[no], point)
     #print bot.config["fill"], "to", colours[colours.index(tgts[lst.index(point)].config["outline"])], "your target is @", botlot[no].tgtLoc
     #print colours[colours.index(tgts[lst.index(point)].config["outline"])], "bot speaking, thanks for that, I'm heading via", botlot[no].commCo
-
 
 
 def safeMove(bot):
@@ -149,6 +159,17 @@ def safeMove(bot):
             bot.dirX = 1
         return bot.dirX, bot.dirY
 
+    # Priority 2: stop crash
+    if bot.crash:
+        bot.vert = random.choice([-1, 1])
+        bot.horizon = random.choice([-1, 1])
+        bot.dirX = bot.horizon
+        bot.dirY = bot.vert
+        bot.crash = False
+
+        print "Crash avoided"
+        return bot.dirX, bot.dirY
+
     #Priority 2 - Follow path to target
     if len(bot.commCo) > 1:
         print "By commCO path"
@@ -181,7 +202,7 @@ def safeMove(bot):
 '''
 build and follow path
 '''
-def getAllPointsInRadius(bot, lst, blst):
+def getAllPointsInRadius(bot, lst):
 
     cx = int(bot.getCenter().getX())
     cy = int(bot.getCenter().getY())
@@ -192,12 +213,19 @@ def getAllPointsInRadius(bot, lst, blst):
 
             if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
                 if (i,j) in lst:
-                    print "Found you @ ", (i, j)
+                    #print "Found you @ ", (i, j)
                     if bot.tgtLoc is None:
                         return (i, j)
+                for num in range (0,len(blst) - 1):
+                    if (i, j) == blst[num]:
+                        if abs(i - cx) < 5:
+                            bot.crash = True
+
+
+                        print (cx, cy), "finds", (i, j)
+                      #  time.sleep(1)
 
     return False
-
 
 def createPath(bot, point):
 
