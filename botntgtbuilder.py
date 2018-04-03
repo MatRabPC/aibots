@@ -2,7 +2,6 @@ from graphics import *
 import random
 
 blst = []
-publicChannel = []
 
 
 #builds bot
@@ -34,6 +33,8 @@ class Bots(object):
         self.crash = False
         self.horizon = 1
         self.holdval = 1
+        if self.getCenter().getY() < 50:
+            self.vert *= -1
 
     def getCenter(self):
         return self.bot.getCenter()
@@ -44,9 +45,9 @@ class Bots(object):
     def move(self, x, y):
         self.stepsTaken = self.stepsTaken + 1
         self.radar.move(x, y)
-        blst.pop(0)
+        blst.pop()
         blst.append((self.bot.getCenter().getX(), self.bot.getCenter().getY()))
-        print "blist: ", blst
+     #   print blst
         return self.bot.move(x, y)
 
     def undraw(self):
@@ -72,6 +73,8 @@ def buildtgtr(win, clr, x, y):
     tgt.setFill('#000')
     tgt.setOutline(clr)
     tgt.draw(win)
+
+
 
     return tgt
 
@@ -102,32 +105,42 @@ def botRemoveTarget(bot):
 
 
 
-def checkTargetWho(point, lst, tgts, bot, botlot):
+def checkTargetWho(point, lst, tgts, bot, botlot, sc):
 
         co = tgts[lst.index(point)].config["outline"]
     #    co = tgt[lst.index(getLoc(point))].config["outline"] == bot.config["fill"]):
-        print bot.config["fill"], "Found a", co , "target"
+        #print bot.config["fill"], "Found a", co , "target"
         if co == bot.config["fill"] and bot.tgtLoc is None:
             bot.tgtLoc = point
-            print createPath(bot, point)
+            createPath(bot, point)
            # return True
 
         else:
-            findWhoElseTarget(point, lst, tgts, bot, botlot)
+            if sc == 2 or sc == 3:
+                findWhoElseTarget(point, lst, tgts, bot, botlot)
 
 
 def findWhoElseTarget(point, lst, tgts, bot, botlot):
     colours = ['blue', 'red', 'green', 'yellow', 'orange']
     no = colours.index(tgts[lst.index(point)].config["outline"]) #bot no
     #publicChannel.append((colours[no], point))
-    print colours[no], point
-    print createPath(botlot[no], point)
+    colours[no], point
+    createPath(botlot[no], point)
     #createPath(botlot[no], point)
     #print bot.config["fill"], "to", colours[colours.index(tgts[lst.index(point)].config["outline"])], "your target is @", botlot[no].tgtLoc
     #print colours[colours.index(tgts[lst.index(point)].config["outline"])], "bot speaking, thanks for that, I'm heading via", botlot[no].commCo
 
 
 def safeMove(bot):
+    '''
+    if bot.crash == True:
+        bot.horizon *= -1
+        bot.vert *= -1
+        bot.dirX = bot.horizon
+        bot.dirY = bot.vert
+        bot.crash = False
+        return bot.dirX, bot.dirY
+        '''
     # Priority 1 - Locking bounds
     if bot.getCenter().getX() > 99:
         bot.dirX = -1
@@ -159,7 +172,6 @@ def safeMove(bot):
             bot.dirX = 1
         return bot.dirX, bot.dirY
 
-    # Priority 2: stop crash
     if bot.crash:
         bot.vert = random.choice([-1, 1])
         bot.horizon = random.choice([-1, 1])
@@ -167,12 +179,12 @@ def safeMove(bot):
         bot.dirY = bot.vert
         bot.crash = False
 
-        print "Crash avoided"
+        #print "Crash avoided"
         return bot.dirX, bot.dirY
 
     #Priority 2 - Follow path to target
     if len(bot.commCo) > 1:
-        print "By commCO path"
+        #print "By commCO path"
         return moveByPath(bot)
 
     # Priotiy 3 - Automated 'snake' movement
@@ -213,19 +225,19 @@ def getAllPointsInRadius(bot, lst):
 
             if ((i - cx) * (i - cx) + (j - cy) * (j - cy) <= r * r):
                 if (i,j) in lst:
-                    #print "Found you @ ", (i, j)
+                  #  print "Found you @ ", (i, j)
                     if bot.tgtLoc is None:
                         return (i, j)
-                for num in range (0,len(blst) - 1):
-                    if (i, j) == blst[num]:
-                        if abs(i - cx) < 5:
-                            bot.crash = True
+
+                elif (i, j) in blst and (abs(cx - i) > 5) and (abs(cy - j) > 5) and (not ((i, j) == (cx, cy))):
+                    bot.crash = True
+                   # print bot.getCenter(), "finds", (i, j)
+                #    time.sleep(3)
 
 
-                        print (cx, cy), "finds", (i, j)
-                      #  time.sleep(1)
 
     return False
+
 
 def createPath(bot, point):
 
@@ -278,7 +290,7 @@ def createPath(bot, point):
     bot.commCo = path
     bot.tgtLoc = point
 
-    print path
+  #  print path
     return path
 
 
@@ -290,7 +302,7 @@ def moveByPath(bot):
     nextx = bot.commCo[0][0] - bot.getCenter().getX()
     nexty = bot.commCo[0][1] - bot.getCenter().getY()
     coo = bot.commCo.pop(0)
-    print "Popped", coo
+   # print "Popped", coo
 
     return coo[0], coo[1]
 

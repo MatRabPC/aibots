@@ -53,10 +53,10 @@ def envwindowbuilder(xlower, xupper, ylower, yupper, winborder):
     win.getMouse() #click to end set up pause
     return win
 
-winOrder = []
 
 def winCondition(win, botlot, iterationNum, scenario):
-    winList = Text(Point(50, 105), winOrder)
+  #  print winOrder
+    winList = Text(Point(50, 105), "End of Event")
     winList.setFill("white")
     winList.setSize(25)
     winList.draw(win)
@@ -73,6 +73,7 @@ def winCondition(win, botlot, iterationNum, scenario):
 #####################################################################
 
 def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenario):
+    winOrder = []
     while True:
         for i in range(len(botlot)):
             if botlot[i].tgts == 0:
@@ -84,8 +85,8 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenari
             p = getAllPointsInRadius(botlot[i], tgtloclist)
 
             if not p == False:
-                checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot)
-                print "bot at:", botlot[i].getCenter()
+                checkTargetWho(p, tgtloclist, tgtlot, botlot[i], botlot, scenario)
+                #print "bot at:", botlot[i].getCenter()
 
 
             if checkTargetFound(botlot[i], tgtlot, tgtloclist):
@@ -94,17 +95,19 @@ def robots(env, timestep, botlot, tgtlot, win, tgtloclist, iterationNum, scenari
             if botlot[i].tgts == 0:
                 print botlot[i].config["fill"], "bot all targets found"
                 botlot[i].removeFromBlst
-                del blst[0:len(blst) - 1]
                 winOrder.append(botlot[i].config["fill"])
 
                 #if we stop when one bot gets all its targets
-                '''
-                winCondition(win, botlot, iterationNum, scenario)
-                return 
-                '''
+                #'''
+                if scenario == 1 or scenario == 3:
+                   # print "sc 2"
+                    winCondition(win, botlot, iterationNum, scenario)
+                    return
+                #'''
 
             #if all bots collect all targets
-            if len(winOrder) == 5:
+            if len(winOrder) == 5 and (scenario == 2):
+               # print "Here"
                 winCondition(win, botlot, iterationNum, scenario)
                 return
 
